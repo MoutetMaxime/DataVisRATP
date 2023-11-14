@@ -12,27 +12,45 @@ const ctx = {
 };
 
 const MERCATOR_PROJ = d3.geoMercator().center([2.3722, 48.9066]).scale(150000);
+const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
+
+function createGraphLayout(svg, station){
+    // J'ai essayé d'ajouter les stations de métro ça marche pas encore bien je sais pas pourquoi
+    var circles = svg.append("g").attr("id", "metro station");
+    console.log(station);
+    circles.selectAll("circle")
+            .data(station.features)
+            .enter()
+            .append("circle")
+            .attr("d", function (d) {
+                return geoPathGenerator(d.geometry);
+            })
+            .attr("r", ctx.NODE_SIZE_NL)
+            .append("title")
+            .text(function(d){return `${d.properties.nom_statio}`;})
+}
 
 function loadData(svg){
     var map = svg.append("g").attr("id", "map")
                     .style("opacity", 0.5);
-    let geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
-    var states = d3.json("data_ratp/arrondissements.geojson");
-    Promise.all([states]).then(function (data) {
-        let states = data[0];
-        console.log(states.features);
+    var arrondissement = d3.json("data_ratp/arrondissements.geojson");
+    var station = d3.json("data_ratp/stations-metro.geojson");
+    Promise.all([arrondissement, station]).then(function (data) {
+        let arrondissement = data[0];
+        let station = data[1];
+
         map.selectAll("path")
-            .data(states.features)
+            .data(arrondissement.features)
             .enter()
             .append("path")
             .attr("d", function (d) {
-                console.log(d.geometry); // Vérifiez les coordonnées géométriques dans la console
                 return geoPathGenerator(d.geometry);
             })
             .attr("class", "state")
             .append("title")
             .text(function(d){return `${d.properties.l_ar}`;})
         
+        createGraphLayout(svg, station);
         }).catch(function (err) {
             console.log("Error loading data");
             console.log(err);
