@@ -29,8 +29,10 @@ function loadData(svg){
                 console.log(d.geometry); // Vérifiez les coordonnées géométriques dans la console
                 return geoPathGenerator(d.geometry);
             })
-            .attr("class", "state");
-
+            .attr("class", "state")
+            .append("title")
+            .text(function(d){return `${d.properties.l_ar}`;})
+        
         }).catch(function (err) {
             console.log("Error loading data");
             console.log(err);
