@@ -19,10 +19,7 @@ svg {
 
     <body onload="createViz()">
         <div id="main">
-            <div style="float:right">
-                <h1>Titre</h1>
-                <form>
-                    <input type="button" value="switch" onclick="toggleMap();" id="toggleBt"/>
+            <div>
                     <h1> INF552 - 2023 - Projet RATP </h1>
                     <h2> Choisissez une ligne </h2>
                     <select id="lineSelect" onchange="updateLine(this.value)">
@@ -49,7 +46,6 @@ svg {
                     <select id="stationSelect" onchange="updateStation(this.value)">
                     </select>
                     <h2> Choisissez une direction </h2>
-                </form>
             </div>
         </div>
     </body>
