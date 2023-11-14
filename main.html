@@ -14,39 +14,40 @@ svg {
     margin-right: auto;
 }
 
-#links path, #links line {
-  stroke: #555;
-  fill:none;
-}
-
-#nodes circle {
-  stroke: #333;
-  stroke-width: 1px;
-}
-
-.state {
-    stroke: white;
-    stroke-width: 1px;
-    fill:#EEE;
-}
-
-.counts {
-    margin-top:.4em;
-    width:100%;
-    font-family: sans-serif;
-    font-size:60%;
-    font-weight: normal;
-    color:#AAA;
-    text-align: center;
-}
         </style>
     </head>
 
     <body onload="createViz()">
         <div id="main">
-            <div style="float:right">
+            <div
                 <form>
                     <input type="button" value="switch" onclick="toggleMap();" id="toggleBt"/>
+                    <h1> INF552 - 2023 - Projet RATP </h1>
+                    <h2> Choisissez une ligne </h2>
+                    <select id="lineSelect" onchange="updateLine(this.value)">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3bis">3bis</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6bis">6bis</option>
+                        <option value="6">6</option>
+                        <option value="7bis">7bis</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11bis">11bis</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                    </select>
+                    <h2> Choisissez une station </h2>
+                    <select id="stationSelect" onchange="updateStation(this.value)">
+                    </select>
+                    <h2> Choisissez une direction </h2>
                 </form>
             </div>
         </div>
