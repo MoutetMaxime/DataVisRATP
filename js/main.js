@@ -167,8 +167,14 @@ function drawLegend(svg, colorScale) {
        .style("font-weight", "bold");
 }
 
+
 function loadData(svg){
     var map = svg.append("g").attr("id", "map");
+    map.append("rect")
+        .attr("width", ctx.w)
+        .attr("height", ctx.h)
+        .style("fill", "#F4F4F4");
+
     var arrondissement = d3.json("data_ratp/arrondissements.geojson");
     var station = d3.json("data_ratp/emplacement-des-gares-idf.geojson");
     var trafficLines = d3.json("data_ratp/traces-du-reseau-ferre-idf.geojson");
@@ -198,7 +204,7 @@ function loadData(svg){
         const colorScale = d3.scaleQuantile()
             .domain(arrondissement.features.map(d => d.properties.density))
             .range(["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]);
-        drawLegend(svg, colorScale);
+
         map.selectAll("path")
             .data(arrondissement.features)
             .enter()
@@ -209,9 +215,13 @@ function loadData(svg){
             .attr("class", "state")
             .style("fill", d => colorScale(d.properties.density))
             .style("stroke", "black")
+            .style("stroke-width", 2)
             .append("title")
             .text(function(d){return `${d.properties.l_ar}`;})
         
+        createGraphLayout(svg, station);
+        drawTrafficLines(svg, trafficLines);
+        drawLegend(svg, colorScale);
         }).catch(function (err) {
             console.log("Error loading data");
             console.log(err);
