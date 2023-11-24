@@ -14,23 +14,27 @@ const ctx = {
 const MERCATOR_PROJ = d3.geoMercator().center([2.3722, 48.9066]).scale(150000);
 const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
 
-function createGraphLayout(svg, station){
+function createGraphLayout(svg, station, trafficLines){
     // Créer des groupes pour chaque type de station
     const metroGroup = svg.append("g").attr("class", "metro-stations");
     const rerGroup = svg.append("g").attr("class", "rer-stations");
     const tramGroup = svg.append("g").attr("class", "tram-stations");
     const terGroup = svg.append("g").attr("class", "ter-stations");
+    const metroLines = svg.append("g").attr("class", "metro-lines");
+    const rerLines = svg.append("g").attr("class", "rer-lines");
+    const tramLines = svg.append("g").attr("class", "tram-lines");
+    const terLines = svg.append("g").attr("class", "ter-lines");
 
     // Appel de fonctions spécifiques pour chaque type
-    createMetroStations(metroGroup, station.features.filter(d => d.properties.mode === "METRO"));
-    createRerStations(rerGroup, station.features.filter(d => d.properties.mode === "RER"));
-    createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"));
-    createTerStations(terGroup, station.features.filter(d => d.properties.mode === "TRAIN"));
+    createMetroStations(metroGroup, station.features.filter(d => d.properties.mode === "METRO"), metroLines, trafficLines.features.filter(d => d.properties.mode === "METRO"));
+    createRerStations(rerGroup, station.features.filter(d => d.properties.mode === "RER"), rerLines, trafficLines.features.filter(d => d.properties.mode === "RER"));
+    createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"), tramLines, trafficLines.features.filter(d => d.properties.mode === "TRAMWAY"));
+    createTerStations(terGroup, station.features.filter(d => d.properties.mode === "TRAIN"), terLines, trafficLines.features.filter(d => d.properties.mode === "TRAIN"));
 
 
 };
 
-function createMetroStations(group, stations) {
+function createMetroStations(group, stations, groupLines, metroLines) {
     group.selectAll(".metro-station")
         .data(stations)
         .enter()
@@ -45,9 +49,11 @@ function createMetroStations(group, stations) {
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .append("title").text(d => d.properties.nom_gares);
+    
+    drawTrafficLines(groupLines, metroLines, ".metro-lines");
 }
 
-function createRerStations(group, stations) {
+function createRerStations(group, stations, groupLines, rerLines) {
     group.selectAll(".rer-station")
         .data(stations)
         .enter()
@@ -63,9 +69,12 @@ function createRerStations(group, stations) {
         .attr("height", ctx.NODE_SIZE_NL*4)
         .style("fill", "red")
         .append("title").text(d => d.properties.nom_gares);
+    
+    drawTrafficLines(groupLines, rerLines, ".rer-lines");
+
 }
 
-function createTramStations(group, stations) {
+function createTramStations(group, stations, groupLines, tramLines) {
     group.selectAll(".tram-station")
         .data(stations)
         .enter()
@@ -80,9 +89,11 @@ function createTramStations(group, stations) {
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .append("title").text(d => d.properties.nom_gares);
+
+    drawTrafficLines(groupLines, tramLines, ".tram-lines")
 }
 
-function createTerStations(group, stations) {
+function createTerStations(group, stations, groupLines, terLines) {
     group.selectAll(".ter-station")
         .data(stations)
         .enter()
@@ -97,13 +108,14 @@ function createTerStations(group, stations) {
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .append("title").text(d => d.properties.nom_gares);
+
+    drawTrafficLines(groupLines, terLines, ".ter-lines")
+
 }
 
-function drawTrafficLines(svg, trafficData) {
-    svg.append("g")
-       .attr("class", "traffic-lines")
-       .selectAll("path")
-       .data(trafficData.features)
+function drawTrafficLines(group, trafficData, lines) {
+    group.selectAll(lines)
+       .data(trafficData)
        .enter()
        .append("path")
        .attr("d", geoPathGenerator)
@@ -165,6 +177,20 @@ function loadData(svg){
         let station = data[1];
         let trafficLines = data[2];
 
+        let tramLines = trafficLines.features.filter(function(feature) {
+            return feature.properties.mode === "TRAMWAY";
+        });
+    
+        let rerLines = trafficLines.features.filter(function(feature) {
+            return feature.properties.mode === "RER";
+        });
+    
+        let terLines = trafficLines.features.filter(function(feature) {
+            return feature.properties.mode === "TRAIN";
+        });
+
+        createGraphLayout(svg, station, trafficLines);
+
         const minDensity = d3.min(arrondissement.features, d => d.properties.density);
         const maxDensity = d3.max(arrondissement.features, d => d.properties.density);
 
@@ -173,8 +199,6 @@ function loadData(svg){
             .domain(arrondissement.features.map(d => d.properties.density))
             .range(["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]);
         drawLegend(svg, colorScale);
-
-
         map.selectAll("path")
             .data(arrondissement.features)
             .enter()
@@ -188,8 +212,6 @@ function loadData(svg){
             .append("title")
             .text(function(d){return `${d.properties.l_ar}`;})
         
-        createGraphLayout(svg, station);
-        drawTrafficLines(svg, trafficLines);
         }).catch(function (err) {
             console.log("Error loading data");
             console.log(err);
@@ -201,6 +223,10 @@ function showMetro() {
     d3.select(".rer-stations").style("display", "none");
     d3.select(".tram-stations").style("display", "none");
     d3.select(".ter-stations").style("display", "none");
+    d3.select(".metro-lines").style("display", "block");
+    d3.select(".rer-lines").style("display", "none");
+    d3.select(".tram-lines").style("display", "none");
+    d3.select(".ter-lines").style("display", "none");
 }
 
 function showRER() {
@@ -208,6 +234,10 @@ function showRER() {
     d3.select(".rer-stations").style("display", "block");
     d3.select(".tram-stations").style("display", "none");
     d3.select(".ter-stations").style("display", "none");
+    d3.select(".metro-lines").style("display", "none");
+    d3.select(".rer-lines").style("display", "block");
+    d3.select(".tram-lines").style("display", "none");
+    d3.select(".ter-lines").style("display", "none");
 }
 
 function showTram() {
@@ -215,6 +245,10 @@ function showTram() {
     d3.select(".rer-stations").style("display", "none");
     d3.select(".tram-stations").style("display", "block");
     d3.select(".ter-stations").style("display", "none");
+    d3.select(".metro-lines").style("display", "none");
+    d3.select(".rer-lines").style("display", "none");
+    d3.select(".tram-lines").style("display", "block");
+    d3.select(".ter-lines").style("display", "none");
 }
 
 function showTer() {
@@ -222,6 +256,21 @@ function showTer() {
     d3.select(".metro-stations").style("display", "none");
     d3.select(".rer-stations").style("display", "none");
     d3.select(".tram-stations").style("display", "none");
+    d3.select(".metro-lines").style("display", "none");
+    d3.select(".rer-lines").style("display", "none");
+    d3.select(".tram-lines").style("display", "none");
+    d3.select(".ter-lines").style("display", "block");
+}
+
+function showTrafficLines() {
+    d3.select(".ter-stations").style("display", "block");
+    d3.select(".metro-stations").style("display", "block");
+    d3.select(".rer-stations").style("display", "block");
+    d3.select(".tram-stations").style("display", "block");
+    d3.select(".metro-lines").style("display", "block");
+    d3.select(".rer-lines").style("display", "block");
+    d3.select(".tram-lines").style("display", "block");
+    d3.select(".ter-lines").style("display", "block");
 }
 
 function createViz(){
@@ -232,10 +281,10 @@ function createViz(){
     svgEl.attr("width", ctx.w);
     svgEl.attr("height", ctx.h);
     loadData(svgEl);
-
     d3.select("#showMetro").on("click", showMetro);
     d3.select("#showRER").on("click", showRER);
     d3.select("#showTram").on("click", showTram);
     d3.select("#showTer").on("click", showTer);
+    d3.select("#showTrafficLines").on("click", showTrafficLines);
 }
 
