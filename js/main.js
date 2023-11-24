@@ -14,8 +14,8 @@ const ctx = {
 const MERCATOR_PROJ = d3.geoMercator().center([2.3722, 48.9066]).scale(150000);
 const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
 
+//Fonction qui créée les stations et les lignes de traffic
 function createGraphLayout(svg, station, trafficLines){
-    // Créer des groupes pour chaque type de station
     const metroGroup = svg.append("g").attr("class", "metro-stations");
     const rerGroup = svg.append("g").attr("class", "rer-stations");
     const tramGroup = svg.append("g").attr("class", "tram-stations");
@@ -25,15 +25,14 @@ function createGraphLayout(svg, station, trafficLines){
     const tramLines = svg.append("g").attr("class", "tram-lines");
     const terLines = svg.append("g").attr("class", "ter-lines");
 
-    // Appel de fonctions spécifiques pour chaque type
     createMetroStations(metroGroup, station.features.filter(d => d.properties.mode === "METRO"), metroLines, trafficLines.features.filter(d => d.properties.mode === "METRO"));
     createRerStations(rerGroup, station.features.filter(d => d.properties.mode === "RER"), rerLines, trafficLines.features.filter(d => d.properties.mode === "RER"));
     createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"), tramLines, trafficLines.features.filter(d => d.properties.mode === "TRAMWAY"));
     createTerStations(terGroup, station.features.filter(d => d.properties.mode === "TRAIN"), terLines, trafficLines.features.filter(d => d.properties.mode === "TRAIN"));
 
-
 };
 
+//Stations et lignes de métro
 function createMetroStations(group, stations, groupLines, metroLines) {
     group.selectAll(".metro-station")
         .data(stations)
@@ -53,6 +52,7 @@ function createMetroStations(group, stations, groupLines, metroLines) {
     drawTrafficLines(groupLines, metroLines, ".metro-lines");
 }
 
+//Stations et lignes de RER
 function createRerStations(group, stations, groupLines, rerLines) {
     group.selectAll(".rer-station")
         .data(stations)
@@ -74,6 +74,7 @@ function createRerStations(group, stations, groupLines, rerLines) {
 
 }
 
+//Stations et lignes de Tram
 function createTramStations(group, stations, groupLines, tramLines) {
     group.selectAll(".tram-station")
         .data(stations)
@@ -93,6 +94,7 @@ function createTramStations(group, stations, groupLines, tramLines) {
     drawTrafficLines(groupLines, tramLines, ".tram-lines")
 }
 
+//Stations et lignes de TER
 function createTerStations(group, stations, groupLines, terLines) {
     group.selectAll(".ter-station")
         .data(stations)
@@ -113,6 +115,7 @@ function createTerStations(group, stations, groupLines, terLines) {
 
 }
 
+//Lignes de traffic
 function drawTrafficLines(group, trafficData, lines) {
     group.selectAll(lines)
        .data(trafficData)
@@ -124,13 +127,12 @@ function drawTrafficLines(group, trafficData, lines) {
        .style("stroke-width", 1);
 }
 
+//Légende de densité de population
 function drawLegend(svg, colorScale) {
-    // Taille et position de la légende
     const legendWidth = 20, legendHeight = 300;
     const legendX = ctx.w - legendWidth - 50; 
     const legendY = 50; 
 
-    // Créer des rectangles pour la légende
     const numBoxes = colorScale.range().length;
     const boxHeight = legendHeight / numBoxes;
 
@@ -147,7 +149,6 @@ function drawLegend(svg, colorScale) {
        .attr("height", boxHeight)
        .style("fill", d => d);
 
-    // Ajouter du texte à la légende
     svg.select(".legend")
        .selectAll("text")
        .data(colorScale.quantiles())
@@ -158,15 +159,13 @@ function drawLegend(svg, colorScale) {
        .text(d => `≤ ${Math.round(d)}`)
        .style("font-size", "10px");
 
-    // Ajouter un titre à la légende
     svg.select(".legend")
        .append("text")
        .attr("x", 0)
        .attr("y", -10)
-       .text("Densité")
+       .text("Densité de population")
        .style("font-weight", "bold");
 }
-
 
 function loadData(svg){
     var map = svg.append("g").attr("id", "map");
