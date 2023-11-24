@@ -183,18 +183,6 @@ function loadData(svg){
         let station = data[1];
         let trafficLines = data[2];
 
-        let tramLines = trafficLines.features.filter(function(feature) {
-            return feature.properties.mode === "TRAMWAY";
-        });
-    
-        let rerLines = trafficLines.features.filter(function(feature) {
-            return feature.properties.mode === "RER";
-        });
-    
-        let terLines = trafficLines.features.filter(function(feature) {
-            return feature.properties.mode === "TRAIN";
-        });
-
         createGraphLayout(svg, station, trafficLines);
 
         const minDensity = d3.min(arrondissement.features, d => d.properties.density);
@@ -272,7 +260,7 @@ function showTer() {
     d3.select(".ter-lines").style("display", "block");
 }
 
-function showTrafficLines() {
+function showAll() {
     d3.select(".ter-stations").style("display", "block");
     d3.select(".metro-stations").style("display", "block");
     d3.select(".rer-stations").style("display", "block");
@@ -295,6 +283,6 @@ function createViz(){
     d3.select("#showRER").on("click", showRER);
     d3.select("#showTram").on("click", showTram);
     d3.select("#showTer").on("click", showTer);
-    d3.select("#showTrafficLines").on("click", showTrafficLines);
+    d3.select("#showAll").on("click", showAll);
 }
 
