@@ -19,12 +19,13 @@ function createGraphLayout(svg, station){
     const metroGroup = svg.append("g").attr("class", "metro-stations");
     const rerGroup = svg.append("g").attr("class", "rer-stations");
     const tramGroup = svg.append("g").attr("class", "tram-stations");
+    const terGroup = svg.append("g").attr("class", "ter-stations");
 
     // Appel de fonctions spécifiques pour chaque type
     createMetroStations(metroGroup, station.features.filter(d => d.properties.mode === "METRO"));
     createRerStations(rerGroup, station.features.filter(d => d.properties.mode === "RER"));
     createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"));
-    //y a aussi des TRAINS jsp si vous voulez les afficher 
+    createTerStations(terGroup, station.features.filter(d => d.properties.mode === "TRAIN"));
 
 };
 
@@ -69,6 +70,23 @@ function createTramStations(group, stations) {
         .enter()
         .append("image")
         .attr("xlink:href", "icone_tram.png")
+        .attr("x", function (d) {
+            return MERCATOR_PROJ(d.geometry.coordinates)[0] - ctx.NODE_SIZE_NL;
+        })
+        .attr("y", function (d) {
+            return MERCATOR_PROJ(d.geometry.coordinates)[1] - ctx.NODE_SIZE_NL;
+        })
+        .attr("width", ctx.NODE_SIZE_NL * 4)
+        .attr("height", ctx.NODE_SIZE_NL * 4)
+        .append("title").text(d => d.properties.nom_gares);
+}
+
+function createTerStations(group, stations) {
+    group.selectAll(".ter-station")
+        .data(stations)
+        .enter()
+        .append("image")
+        .attr("xlink:href", "/icone_TER.png") // Assurez-vous d'avoir une icône pour les TER
         .attr("x", function (d) {
             return MERCATOR_PROJ(d.geometry.coordinates)[0] - ctx.NODE_SIZE_NL;
         })
@@ -165,20 +183,29 @@ function showMetro() {
     d3.select(".metro-stations").style("display", "block");
     d3.select(".rer-stations").style("display", "none");
     d3.select(".tram-stations").style("display", "none");
+    d3.select(".ter-stations").style("display", "none");
 }
 
 function showRER() {
     d3.select(".metro-stations").style("display", "none");
     d3.select(".rer-stations").style("display", "block");
     d3.select(".tram-stations").style("display", "none");
+    d3.select(".ter-stations").style("display", "none");
 }
 
 function showTram() {
     d3.select(".metro-stations").style("display", "none");
     d3.select(".rer-stations").style("display", "none");
     d3.select(".tram-stations").style("display", "block");
+    d3.select(".ter-stations").style("display", "none");
 }
 
+function showTer() {
+    d3.select(".ter-stations").style("display", "block");
+    d3.select(".metro-stations").style("display", "none");
+    d3.select(".rer-stations").style("display", "none");
+    d3.select(".tram-stations").style("display", "none");
+}
 
 function createViz(){
     console.log("Using D3 v" + d3.version);
@@ -192,5 +219,6 @@ function createViz(){
     d3.select("#showMetro").on("click", showMetro);
     d3.select("#showRER").on("click", showRER);
     d3.select("#showTram").on("click", showTram);
+    d3.select("#showTer").on("click", showTer);
 }
 
