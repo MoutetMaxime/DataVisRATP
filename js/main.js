@@ -32,15 +32,16 @@ function createMetroStations(group, stations) {
     group.selectAll(".metro-station")
         .data(stations)
         .enter()
-        .append("circle")
-        .attr("cx", function (d) {
-           return MERCATOR_PROJ(d.geometry.coordinates)[0];
+        .append("image")
+        .attr("xlink:href", "/icone_metro.png")
+        .attr("x", function (d) {
+           return MERCATOR_PROJ(d.geometry.coordinates)[0]- ctx.NODE_SIZE_NL;
        })
-        .attr("cy", function (d) {
-           return MERCATOR_PROJ(d.geometry.coordinates)[1];
+        .attr("y", function (d) {
+           return MERCATOR_PROJ(d.geometry.coordinates)[1]- ctx.NODE_SIZE_NL;
        })
-        .attr("r", ctx.NODE_SIZE_NL)
-        .style("fill", "orange")
+        .attr("width", ctx.NODE_SIZE_NL * 4)
+        .attr("height", ctx.NODE_SIZE_NL * 4)
         .append("title").text(d => d.properties.nom_gares);
 }
 
@@ -48,15 +49,16 @@ function createRerStations(group, stations) {
     group.selectAll(".rer-station")
         .data(stations)
         .enter()
-        .append("rect")
+        .append("image")
+        .attr("xlink:href", "/icone_rer.png") 
         .attr("x", function (d) {
-            return MERCATOR_PROJ(d.geometry.coordinates)[0] - ctx.NODE_SIZE_NL / 2;
+            return MERCATOR_PROJ(d.geometry.coordinates)[0] - ctx.NODE_SIZE_NL;
         })
         .attr("y", function (d) {
-            return MERCATOR_PROJ(d.geometry.coordinates)[1] - ctx.NODE_SIZE_NL / 2;
+            return MERCATOR_PROJ(d.geometry.coordinates)[1] - ctx.NODE_SIZE_NL;
         })
-        .attr("width", ctx.NODE_SIZE_NL*2)
-        .attr("height", ctx.NODE_SIZE_NL*2)
+        .attr("width", ctx.NODE_SIZE_NL*4)
+        .attr("height", ctx.NODE_SIZE_NL*4)
         .style("fill", "red")
         .append("title").text(d => d.properties.nom_gares);
 }
@@ -65,18 +67,16 @@ function createTramStations(group, stations) {
     group.selectAll(".tram-station")
         .data(stations)
         .enter()
-        .append("path")
-        .attr("d", function (d) {
-            // Calculer les coordonnées du centre de la station
-            var center = MERCATOR_PROJ(d.geometry.coordinates);
-            var x = center[0];
-            var y = center[1];
-            var size = ctx.NODE_SIZE_NL*1.3; // Taille du triangle
-   
-            // Définir les points du triangle
-            return `M ${x} ${y - size} L ${x - size} ${y + size} L ${x + size} ${y + size} Z`;
+        .append("image")
+        .attr("xlink:href", "icone_tram.png")
+        .attr("x", function (d) {
+            return MERCATOR_PROJ(d.geometry.coordinates)[0] - ctx.NODE_SIZE_NL;
         })
-        .style("fill", "yellow")
+        .attr("y", function (d) {
+            return MERCATOR_PROJ(d.geometry.coordinates)[1] - ctx.NODE_SIZE_NL;
+        })
+        .attr("width", ctx.NODE_SIZE_NL * 4)
+        .attr("height", ctx.NODE_SIZE_NL * 4)
         .append("title").text(d => d.properties.nom_gares);
 }
 
@@ -122,56 +122,6 @@ function drawLegend(svg, colorScale) {
        .text("Densité")
        .style("font-weight", "bold");
 }
-
-function drawStationLegend(svg) {
-    const legendX = 50; 
-    const legendY = ctx.h - 100; 
-    const spacing = 30; // Espacement entre les lignes de légende
-
-    // Groupe pour la légende des stations
-    const stationLegend = svg.append("g")
-                             .attr("class", "station-legend")
-                             .attr("transform", `translate(${legendX}, ${legendY})`);
-
-    // Légende pour le métro
-    stationLegend.append("circle")
-                 .attr("cx", 0)
-                 .attr("cy", 0)
-                 .attr("r", ctx.NODE_SIZE_NL)
-                 .style("fill", "orange");
-    stationLegend.append("text")
-                 .attr("x", 20)
-                 .attr("y", 5)
-                 .text("Métro")
-                 .style("font-size", "12px");
-
-    // Légende pour le RER
-    stationLegend.append("rect")
-                 .attr("x", 0)
-                 .attr("y", spacing)
-                 .attr("width", ctx.NODE_SIZE_NL*2)
-                 .attr("height", ctx.NODE_SIZE_NL*2)
-                 .style("fill", "red");
-    stationLegend.append("text")
-                 .attr("x", 20)
-                 .attr("y", spacing + 5)
-                 .text("RER")
-                 .style("font-size", "12px");
-
-    const triangleSize = ctx.NODE_SIZE_NL*3; // Utiliser la même base de taille que pour les autres symboles
-    const triangleHeight = Math.sqrt(3) / 2 * triangleSize; // Hauteur d'un triangle équilatéral
-             
-    // Légende pour le Tramway
-    stationLegend.append("path")
-        .attr("d", `M 0 ${spacing * 2} L ${-triangleSize / 2} ${spacing * 2 + triangleHeight} L ${triangleSize / 2} ${spacing * 2 + triangleHeight} Z`)
-        .style("fill", "yellow");
-    stationLegend.append("text")
-        .attr("x", 20)
-        .attr("y", spacing * 2 + 5)
-        .text("Tramway")
-        .style("font-size", "12px");
-}
-
 
 function loadData(svg){
     var map = svg.append("g").attr("id", "map");
@@ -220,5 +170,4 @@ function createViz(){
     svgEl.attr("width", ctx.w);
     svgEl.attr("height", ctx.h);
     loadData(svgEl);
-    drawStationLegend(svgEl);
 };
