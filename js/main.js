@@ -219,9 +219,9 @@ function loadData(svg){
             .append("title")
             .text(function(d){return `${d.properties.l_ar}`;})
         
+        drawLegend(svg, colorScale);
         createGraphLayout(svg, station);
         drawTrafficLines(svg, trafficLines);
-        drawLegend(svg, colorScale);
         }).catch(function (err) {
             console.log("Error loading data");
             console.log(err);
