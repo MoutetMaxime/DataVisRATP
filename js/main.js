@@ -161,13 +161,36 @@ function loadData(svg){
         }
         );
 }
+function showMetro() {
+    d3.select(".metro-stations").style("display", "block");
+    d3.select(".rer-stations").style("display", "none");
+    d3.select(".tram-stations").style("display", "none");
+}
+
+function showRER() {
+    d3.select(".metro-stations").style("display", "none");
+    d3.select(".rer-stations").style("display", "block");
+    d3.select(".tram-stations").style("display", "none");
+}
+
+function showTram() {
+    d3.select(".metro-stations").style("display", "none");
+    d3.select(".rer-stations").style("display", "none");
+    d3.select(".tram-stations").style("display", "block");
+}
+
 
 function createViz(){
-    console.log("Using D3 v"+d3.version);
+    console.log("Using D3 v" + d3.version);
     d3.select("body")
       .on("keydown", function(event, d){handleKeyEvent(event);});
     let svgEl = d3.select("#main").append("svg");
     svgEl.attr("width", ctx.w);
     svgEl.attr("height", ctx.h);
     loadData(svgEl);
-};
+
+    d3.select("#showMetro").on("click", showMetro);
+    d3.select("#showRER").on("click", showRER);
+    d3.select("#showTram").on("click", showTram);
+}
+

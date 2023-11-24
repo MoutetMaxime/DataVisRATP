@@ -3,51 +3,22 @@
     <head>
         <meta charset="utf-8">
         <title>INF552 - 2023 - Projet RATP</title>
-        <!-- https://d3js.org/ -->
         <script type="text/javascript" src="js/d3.v7.min.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
         <style>
-svg {
-    display: block;
-    border: 1px solid #444;
-    margin-left: auto;
-    margin-right: auto;
-}
-
+            svg {
+                display: block;
+                border: 1px solid #444;
+                margin-left: auto;
+                margin-right: auto;
+            }
         </style>
     </head>
-
     <body onload="createViz()">
         <div id="main">
-            <div>
-                    <h1> INF552 - 2023 - Projet RATP </h1>
-                    <h2> Choisissez une ligne </h2>
-                    <select id="lineSelect" onchange="updateLine(this.value)">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3bis">3bis</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6bis">6bis</option>
-                        <option value="6">6</option>
-                        <option value="7bis">7bis</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11bis">11bis</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                    </select>
-                    <h2> Choisissez une station </h2>
-                    <select id="stationSelect" onchange="updateStation(this.value)">
-                    </select>
-                    <h2> Choisissez une direction </h2>
-            </div>
+            <button id="showMetro">Afficher Métro</button>
+            <button id="showRER">Afficher RER</button>
+            <button id="showTram">Afficher Tram</button>
         </div>
+        <script type="text/javascript" src="js/main.js"></script>
     </body>
-
 </html>
