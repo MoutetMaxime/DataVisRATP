@@ -27,6 +27,7 @@ function createGraphLayout(svg, station){
     createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"));
     createTerStations(terGroup, station.features.filter(d => d.properties.mode === "TRAIN"));
 
+
 };
 
 function createMetroStations(group, stations) {
@@ -98,6 +99,19 @@ function createTerStations(group, stations) {
         .append("title").text(d => d.properties.nom_gares);
 }
 
+function drawTrafficLines(svg, trafficData) {
+    svg.append("g")
+       .attr("class", "traffic-lines")
+       .selectAll("path")
+       .data(trafficData.features)
+       .enter()
+       .append("path")
+       .attr("d", geoPathGenerator)
+       .style("fill", "none")
+       .style("stroke", "blue") 
+       .style("stroke-width", 1);
+}
+
 function drawLegend(svg, colorScale) {
     // Taille et position de la légende
     const legendWidth = 20, legendHeight = 300;
@@ -145,9 +159,11 @@ function loadData(svg){
     var map = svg.append("g").attr("id", "map");
     var arrondissement = d3.json("data_ratp/arrondissements.geojson");
     var station = d3.json("data_ratp/emplacement-des-gares-idf.geojson");
-    Promise.all([arrondissement, station]).then(function (data) {
+    var trafficLines = d3.json("data_ratp/traces-du-reseau-ferre-idf.geojson");
+    Promise.all([arrondissement, station, trafficLines]).then(function (data) {
         let arrondissement = data[0];
         let station = data[1];
+        let trafficLines = data[2];
 
         const minDensity = d3.min(arrondissement.features, d => d.properties.density);
         const maxDensity = d3.max(arrondissement.features, d => d.properties.density);
@@ -173,6 +189,7 @@ function loadData(svg){
             .text(function(d){return `${d.properties.l_ar}`;})
         
         createGraphLayout(svg, station);
+        drawTrafficLines(svg, trafficLines);
         }).catch(function (err) {
             console.log("Error loading data");
             console.log(err);
