@@ -1,5 +1,5 @@
 const ctx = {
-    w: 800,
+    w: 1600,
     h: 800,
     mapMode: false,
     MIN_COUNT: 3000,
@@ -130,7 +130,7 @@ function drawTrafficLines(group, trafficData, lines) {
 //Légende de densité de population
 function drawLegend(svg, colorScale) {
     const legendWidth = 20, legendHeight = 300;
-    const legendX = ctx.w - legendWidth - 50; 
+    const legendX = 50; 
     const legendY = 50; 
 
     const numBoxes = colorScale.range().length;
@@ -172,8 +172,7 @@ function loadData(svg){
     map.append("rect")
         .attr("width", ctx.w)
         .attr("height", ctx.h)
-        .style("fill", "#F4F4F4");
-
+        .style("fill", "#ffffff");
     var arrondissement = d3.json("data_ratp/arrondissements.geojson");
     var station = d3.json("data_ratp/emplacement-des-gares-idf.geojson");
     var trafficLines = d3.json("data_ratp/traces-du-reseau-ferre-idf.geojson");
