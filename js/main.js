@@ -11,7 +11,7 @@ const ctx = {
     links: [],
 };
 
-const MERCATOR_PROJ = d3.geoMercator().center([2.3722, 48.9066]).scale(150000);
+const MERCATOR_PROJ = d3.geoMercator().center([2.3514616, 48.8566969]).scale(200000).translate([ctx.w, ctx.h / 2]);
 const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
 
 //Fonction qui créée les stations et les lignes de traffic
@@ -143,7 +143,7 @@ function drawTrafficLines(group, trafficData, lines) {
        .append("path")
        .attr("d", geoPathGenerator)
        .style("fill", "none")
-       .style("stroke", "darkblue")
+       .style("stroke", "#20B2AA")
        .style("stroke-width", 2)
        .style("opacity", 0) // Set initial opacity to 0
 
