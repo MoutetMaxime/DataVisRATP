@@ -159,7 +159,7 @@ function drawTrafficLines(group, trafficData, lines) {
 function drawLegend(svg, colorScale) {
     const legendWidth = 20, legendHeight = 300;
     const legendX = 50; 
-    const legendY = 50; 
+    const legendY = 150; 
 
     const numBoxes = colorScale.range().length;
     const boxHeight = legendHeight / numBoxes;
@@ -185,14 +185,16 @@ function drawLegend(svg, colorScale) {
        .attr("x", legendWidth + 5)
        .attr("y", (d, i) => i * boxHeight + boxHeight / 2)
        .text(d => `≤ ${Math.round(d)}`)
-       .style("font-size", "10px");
+       .style("font-size", "10px")
+         .style("fill", "white");
 
     svg.select(".legend")
-       .append("text")
-       .attr("x", 0)
-       .attr("y", -10)
-       .text("Densité de population")
-       .style("font-weight", "bold");
+        .append("text")
+        .attr("x", 0)
+        .attr("y", -10)
+        .text("Densité de population")
+        .style("font-weight", "bold")
+        .style("fill", "white");
 }
 
 function loadData(svg){
