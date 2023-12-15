@@ -71,7 +71,7 @@ function loadAndFilterCsv(file, stationName) {
     return d3.dsv(";", file, function(d) {
       return { year: new Date(file.match(/\d+/)[0], 0, 1), station: d.Station, traffic: +d.Trafic };
     }).then(data => data.filter(d => d.station === stationName));
-  }
+}
 
 function loadData(svgEl){
     const searchParams = new URLSearchParams(window.location.search);
@@ -79,8 +79,9 @@ function loadData(svgEl){
     
     Promise.all(files.map(file => loadAndFilterCsv(file, stationName))).then(function(values) {
         let combinedData = values.flat();
-
-        graphTraffic(svgEl, combinedData);
+        if (combinedData.length != 0) {
+            graphTraffic(svgEl, combinedData);
+        }
         
     }).catch(function (err) {
         console.log("Error loading data");
