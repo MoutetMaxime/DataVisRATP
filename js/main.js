@@ -11,7 +11,7 @@ const ctx = {
     links: [],
 };
 
-const MERCATOR_PROJ = d3.geoMercator().center([2.3722, 48.9066]).scale(150000);
+const MERCATOR_PROJ = d3.geoMercator().center([2.3514616, 48.8566969]).scale(200000).translate([ctx.w, ctx.h / 2]);
 const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
 
 //Fonction qui créée les stations et les lignes de traffic
@@ -143,7 +143,7 @@ function drawTrafficLines(group, trafficData, lines) {
        .append("path")
        .attr("d", geoPathGenerator)
        .style("fill", "none")
-       .style("stroke", "darkblue")
+       .style("stroke", "#20B2AA")
        .style("stroke-width", 2)
        .style("opacity", 0) // Set initial opacity to 0
 
@@ -159,7 +159,7 @@ function drawTrafficLines(group, trafficData, lines) {
 function drawLegend(svg, colorScale) {
     const legendWidth = 20, legendHeight = 300;
     const legendX = 50; 
-    const legendY = 50; 
+    const legendY = 150; 
 
     const numBoxes = colorScale.range().length;
     const boxHeight = legendHeight / numBoxes;
@@ -185,14 +185,16 @@ function drawLegend(svg, colorScale) {
        .attr("x", legendWidth + 5)
        .attr("y", (d, i) => i * boxHeight + boxHeight / 2)
        .text(d => `≤ ${Math.round(d)}`)
-       .style("font-size", "10px");
+       .style("font-size", "10px")
+         .style("fill", "white");
 
     svg.select(".legend")
-       .append("text")
-       .attr("x", 0)
-       .attr("y", -10)
-       .text("Densité de population")
-       .style("font-weight", "bold");
+        .append("text")
+        .attr("x", 0)
+        .attr("y", -10)
+        .text("Densité de population")
+        .style("font-weight", "bold")
+        .style("fill", "white");
 }
 
 function loadData(svg){
