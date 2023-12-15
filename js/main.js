@@ -152,9 +152,11 @@ function drawTrafficLines(group, trafficData, lines) {
        .transition()
        .duration(1000) // Animation duration in milliseconds
        .delay((d, i) => i * 5) // Delay between each linn
+       .style("opacity", 1);
 
-       .style("opacity", 1); // Set final opacity to 1
 }
+
+
 
 //Légende de densité de population
 function drawLegend(svg, colorScale) {
@@ -299,22 +301,33 @@ function createViz() {
     console.log("Using D3 v" + d3.version);
 
     // Set up key event listener
-    d3.select("body")
-        .on("keydown", function (event, d) {
-            handleKeyEvent(event);
-        });
+    d3.select("body").on("keydown", function (event, d) {
+        handleKeyEvent(event);
+    });
 
     // Create SVG element
     let svgEl = d3.select("#main").append("svg")
         .attr("width", ctx.w)
         .attr("height", ctx.h);
 
+    // Add zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([1, 8]) // Define the minimum and maximum zoom levels
+        .on("zoom", zoomed);
+
+    svgEl.call(zoom);
+
     loadData(svgEl);
+
     // Set up event listeners for different actions
     d3.select("#showMetro").on("click", showMetro);
     d3.select("#showRER").on("click", showRER);
     d3.select("#showTram").on("click", showTram);
     d3.select("#showTer").on("click", showTer);
     d3.select("#showAll").on("click", showAll);
-}
 
+    function zoomed(event) {
+        const { x, y, k } = event.transform;
+        svgEl.attr("transform", `scale(${k})`);
+    }
+}
