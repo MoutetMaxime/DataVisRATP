@@ -5,20 +5,23 @@ const ctx = {
 
 const files = [
     "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2014.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2015.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2016.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2017.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2018.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2019.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2020.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2021.csv",
-    // "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv"
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2015.csv",
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2016.csv",
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2017.csv",
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2018.csv",
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2019.csv",
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2020.csv",
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2021.csv",
+    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv"
   ];
 
 
 function graphTraffic(svgEl, data){
+    var minTraffic = d3.min(data, d => d.traffic);
+    var maxTraffic = d3.max(data, d => d.traffic);
+
     var x = d3.scaleTime().domain([new Date(2014, 0, 1), new Date(2022, 0, 1)]).range([0, 400]);
-    var y = d3.scaleLinear().range([200, 0]);
+    var y = d3.scaleLinear().range([200, 0]).domain([minTraffic, maxTraffic]);
 
     svgEl.append("g")
         .attr("transform", "translate(100, 250)")
@@ -28,42 +31,32 @@ function graphTraffic(svgEl, data){
         .attr("transform", "translate(100, 50)")
         .call(d3.axisLeft(y));
 
-    svgEl.selectAll("bar")
+        svgEl.selectAll(".bar")
         .data(data)
         .enter().append("rect")
         .attr("class", "bar")
         .style("fill", "steelblue")
-        .attr("x", function(d) { 
-            console.log(d);
-            return x(d.year); })
+        .attr("x", function(d) { return x(new Date(d.year)); })
         .attr("width", 20)
-        .attr("y", function(d) { return y(d.Trafic); })
-        .attr("height", function(d) { return 200 - y(d.Trafic); });
+        .attr("y", function(d) { return y(d.traffic); })
+        .attr("height", function(d) { return 200 - y(d.traffic); });
 }
 
 
-
 function loadAndFilterCsv(file, stationName) {
-    return d3.csv(file, {
-      delimiter: ";",
-      row: function(d) {
-        return { year: file.match(/\d+/)[0], station: d.Station, traffic: +d.Trafic };
-      }
+    return d3.dsv(";", file, function(d) {
+      return { year: new Date(file.match(/\d+/)[0], 0, 1), station: d.Station, traffic: +d.Trafic };
     }).then(data => data.filter(d => d.station === stationName));
   }
 
 function loadData(svgEl){
     const searchParams = new URLSearchParams(window.location.search);
     const stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
-    console.log(stationName);
     
     Promise.all(files.map(file => loadAndFilterCsv(file, stationName))).then(function(values) {
         let combinedData = values.flat();
-        console.log(combinedData);
-        let stationData = combinedData.filter(d => d.Station == stationName);
-        console.log(stationData);
 
-        graphTraffic(svgEl, stationData);
+        graphTraffic(svgEl, combinedData);
         
     }).catch(function (err) {
         console.log("Error loading data");
