@@ -16,30 +16,54 @@ const files = [
   ];
 
 
-function graphTraffic(svgEl, data){
+  function graphTraffic(svgEl, data) {
+    var margin = {top: 100, right: 20, bottom: 70, left: 100},
+        width = 400,
+        height = 200;
+
     var minTraffic = d3.min(data, d => d.traffic);
     var maxTraffic = d3.max(data, d => d.traffic);
 
-    var x = d3.scaleTime().domain([new Date(2014, 0, 1), new Date(2022, 0, 1)]).range([0, 400]);
-    var y = d3.scaleLinear().range([200, 0]).domain([minTraffic, maxTraffic]);
+    var x = d3.scaleTime()
+              .domain([new Date(2013, 0, 1), new Date(2023, 0, 1)])
+              .range([0, width]);
+    var y = d3.scaleLinear()
+              .domain([0, maxTraffic])
+              .range([height, 0]);
 
     svgEl.append("g")
-        .attr("transform", "translate(100, 250)")
+        .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
         .call(d3.axisBottom(x));
 
     svgEl.append("g")
-        .attr("transform", "translate(100, 50)")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .call(d3.axisLeft(y));
 
-        svgEl.selectAll(".bar")
+    var barWidth = 30;
+
+    svgEl.selectAll(".bar")
         .data(data)
         .enter().append("rect")
         .attr("class", "bar")
         .style("fill", "steelblue")
-        .attr("x", function(d) { return x(new Date(d.year)); })
-        .attr("width", 20)
-        .attr("y", function(d) { return y(d.traffic); })
-        .attr("height", function(d) { return 200 - y(d.traffic); });
+        .attr("x", function(d) {
+            return x(new Date(d.year)) - (barWidth / 2) + margin.left;
+        })
+        .attr("width", barWidth - 1)
+        .attr("y", function(d) { return y(0) + margin.top; })
+        .attr("height", 0)
+        .transition()
+        .duration(750)
+        .attr("y", function(d) { return y(d.traffic) + margin.top; })
+        .attr("height", function(d) { return height - y(d.traffic); });
+
+    svgEl.append("text")
+        .attr("x", (width / 2) + margin.left)
+        .attr("y", margin.top / 1.3)
+        .attr("text-anchor", "middle")
+        .style("font-size", "20px")
+        .style("fill", "steelblue")
+        .text("ANNUAL TRAFIC FOR THE STATION " + data[0].station);
 }
 
 
