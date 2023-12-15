@@ -158,7 +158,7 @@ function drawTrafficLines(group, trafficData, lines) {
 //Légende de densité de population
 function drawLegend(svg, colorScale) {
     const legendWidth = 20, legendHeight = 300;
-    const legendX = 50; 
+    const legendX = 25; 
     const legendY = 150; 
 
     const numBoxes = colorScale.range().length;
