@@ -1,5 +1,5 @@
 const ctx = {
-    w: 1600,
+    w: 800,
     h: 800,
     mapMode: false,
     MIN_COUNT: 3000,
@@ -25,11 +25,11 @@ function createGraphLayout(svg, station, trafficLines){
     const tramLines = svg.append("g").attr("class", "tram-lines");
     const terLines = svg.append("g").attr("class", "ter-lines");
 
-    createMetroStations(metroGroup, station.features.filter(d => d.properties.mode === "METRO"), metroLines, trafficLines.features.filter(d => d.properties.mode === "METRO"));
     createRerStations(rerGroup, station.features.filter(d => d.properties.mode === "RER"), rerLines, trafficLines.features.filter(d => d.properties.mode === "RER"));
     createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"), tramLines, trafficLines.features.filter(d => d.properties.mode === "TRAMWAY"));
     createTerStations(terGroup, station.features.filter(d => d.properties.mode === "TRAIN"), terLines, trafficLines.features.filter(d => d.properties.mode === "TRAIN"));
-
+    createMetroStations(metroGroup, station.features.filter(d => d.properties.mode === "METRO"), metroLines, trafficLines.features.filter(d => d.properties.mode === "METRO"));
+    console.log(station.features.filter(d => d.properties.mode === "METRO"))
 };
 
 //Stations et lignes de métro
@@ -143,8 +143,16 @@ function drawTrafficLines(group, trafficData, lines) {
        .append("path")
        .attr("d", geoPathGenerator)
        .style("fill", "none")
-       .style("stroke", "blue") 
-       .style("stroke-width", 1);
+       .style("stroke", "darkblue")
+       .style("stroke-width", 2)
+       .style("opacity", 0) // Set initial opacity to 0
+
+       // Add transition for progressive animation
+       .transition()
+       .duration(1000) // Animation duration in milliseconds
+       .delay((d, i) => i * 5) // Delay between each linn
+
+       .style("opacity", 1); // Set final opacity to 1
 }
 
 //Légende de densité de population
@@ -234,58 +242,58 @@ function loadData(svg){
         );
 }
 function showMetro() {
-    d3.select(".metro-stations").style("display", "block");
-    d3.select(".rer-stations").style("display", "none");
-    d3.select(".tram-stations").style("display", "none");
-    d3.select(".ter-stations").style("display", "none");
-    d3.select(".metro-lines").style("display", "block");
-    d3.select(".rer-lines").style("display", "none");
-    d3.select(".tram-lines").style("display", "none");
-    d3.select(".ter-lines").style("display", "none");
+    d3.select(".metro-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".rer-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".tram-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".ter-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".metro-lines").transition().duration(1000).style("opacity", 1);
+    d3.select(".rer-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".tram-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".ter-lines").transition().duration(1000).style("opacity", 0);
 }
 
 function showRER() {
-    d3.select(".metro-stations").style("display", "none");
-    d3.select(".rer-stations").style("display", "block");
-    d3.select(".tram-stations").style("display", "none");
-    d3.select(".ter-stations").style("display", "none");
-    d3.select(".metro-lines").style("display", "none");
-    d3.select(".rer-lines").style("display", "block");
-    d3.select(".tram-lines").style("display", "none");
-    d3.select(".ter-lines").style("display", "none");
+    d3.select(".metro-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".rer-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".tram-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".ter-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".metro-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".rer-lines").transition().duration(1000).style("opacity", 1);
+    d3.select(".tram-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".ter-lines").transition().duration(1000).style("opacity", 0);
 }
 
 function showTram() {
-    d3.select(".metro-stations").style("display", "none");
-    d3.select(".rer-stations").style("display", "none");
-    d3.select(".tram-stations").style("display", "block");
-    d3.select(".ter-stations").style("display", "none");
-    d3.select(".metro-lines").style("display", "none");
-    d3.select(".rer-lines").style("display", "none");
-    d3.select(".tram-lines").style("display", "block");
-    d3.select(".ter-lines").style("display", "none");
+    d3.select(".metro-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".rer-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".tram-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".ter-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".metro-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".rer-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".tram-lines").transition().duration(1000).style("opacity", 1);
+    d3.select(".ter-lines").transition().duration(1000).style("opacity", 0);
 }
 
 function showTer() {
-    d3.select(".ter-stations").style("display", "block");
-    d3.select(".metro-stations").style("display", "none");
-    d3.select(".rer-stations").style("display", "none");
-    d3.select(".tram-stations").style("display", "none");
-    d3.select(".metro-lines").style("display", "none");
-    d3.select(".rer-lines").style("display", "none");
-    d3.select(".tram-lines").style("display", "none");
-    d3.select(".ter-lines").style("display", "block");
+    d3.select(".ter-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".metro-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".rer-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".tram-stations").transition().duration(1000).style("opacity", 0);
+    d3.select(".metro-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".rer-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".tram-lines").transition().duration(1000).style("opacity", 0);
+    d3.select(".ter-lines").transition().duration(1000).style("opacity", 1);
 }
 
 function showAll() {
-    d3.select(".ter-stations").style("display", "block");
-    d3.select(".metro-stations").style("display", "block");
-    d3.select(".rer-stations").style("display", "block");
-    d3.select(".tram-stations").style("display", "block");
-    d3.select(".metro-lines").style("display", "block");
-    d3.select(".rer-lines").style("display", "block");
-    d3.select(".tram-lines").style("display", "block");
-    d3.select(".ter-lines").style("display", "block");
+    d3.select(".ter-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".metro-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".rer-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".tram-stations").transition().duration(1000).style("opacity", 1);
+    d3.select(".metro-lines").transition().duration(1000).style("opacity", 1);
+    d3.select(".rer-lines").transition().duration(1000).style("opacity", 1);
+    d3.select(".tram-lines").transition().duration(1000).style("opacity", 1);
+    d3.select(".ter-lines").transition().duration(1000).style("opacity", 1);
 }
 
 function createViz(){
