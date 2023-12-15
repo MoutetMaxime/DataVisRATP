@@ -197,10 +197,6 @@ function drawLegend(svg, colorScale) {
 
 function loadData(svg){
     var map = svg.append("g").attr("id", "map");
-    map.append("rect")
-        .attr("width", ctx.w)
-        .attr("height", ctx.h)
-        .style("fill", "#ffffff");
     var arrondissement = d3.json("data_ratp/arrondissements.geojson");
     var station = d3.json("data_ratp/emplacement-des-gares-idf.geojson");
     var trafficLines = d3.json("data_ratp/traces-du-reseau-ferre-idf.geojson");
