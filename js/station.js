@@ -4,16 +4,19 @@ const ctx = {
 };
 
 const files = [
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2014.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2015.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2016.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2017.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2018.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2019.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2020.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2021.csv",
-    "data_ratp/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv"
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2014.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2015.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2016.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2017.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2018.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2019.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2020.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2021.csv",
+    "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv"
   ];
+
+const searchParams = new URLSearchParams(window.location.search);
+const stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
 
 
   function graphTraffic(svgEl, data) {
@@ -32,11 +35,11 @@ const files = [
               .range([height, 0]);
 
     svgEl.append("g")
-        .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
+        .attr("transform", "translate(" + margin.left + "," + (height + 2 * margin.top) + ")")
         .call(d3.axisBottom(x));
 
     svgEl.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("transform", "translate(" + margin.left + "," + 2 * margin.top + ")")
         .call(d3.axisLeft(y));
 
     var barWidth = 30;
@@ -50,20 +53,20 @@ const files = [
             return x(new Date(d.year)) - (barWidth / 2) + margin.left;
         })
         .attr("width", barWidth - 1)
-        .attr("y", function(d) { return y(0) + margin.top; })
+        .attr("y", function(d) { return y(0) + 2 * margin.top; })
         .attr("height", 0)
         .transition()
         .duration(750)
-        .attr("y", function(d) { return y(d.traffic) + margin.top; })
+        .attr("y", function(d) { return y(d.traffic) + 2 * margin.top; })
         .attr("height", function(d) { return height - y(d.traffic); });
 
     svgEl.append("text")
         .attr("x", (width / 2) + margin.left)
-        .attr("y", margin.top / 1.3)
+        .attr("y", 1.7 * margin.top)
         .attr("text-anchor", "middle")
         .style("font-size", "20px")
         .style("fill", "steelblue")
-        .text("ANNUAL TRAFIC FOR THE STATION " + data[0].station);
+        .text('ANNUAL TRAFIC FOR THE STATION "' + data[0].station + '"');
 }
 
 
@@ -74,9 +77,6 @@ function loadAndFilterCsv(file, stationName) {
 }
 
 function loadData(svgEl){
-    const searchParams = new URLSearchParams(window.location.search);
-    const stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
-    
     Promise.all(files.map(file => loadAndFilterCsv(file, stationName))).then(function(values) {
         let combinedData = values.flat();
         if (combinedData.length != 0) {
@@ -91,11 +91,26 @@ function loadData(svgEl){
 }
 
 
+function displayMap(){
+    console.log("yo");
+    const mymap = L.map('map').setView([48.8566, 2.3522], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mymap);
+
+    L.marker([48.8566, 2.3522]).addTo(mymap)
+        .bindPopup('Paris, France')
+        .openPopup();
+    
+}
+
+
 function convertirEnMajusculesSansAccents(chaine) {
     // Convertir en majuscules
     let chaineEnMajuscules = chaine.toUpperCase();
 
-    // Remplacer les caractères accentués
+    // Remplace les caractères accentués
     chaineEnMajuscules = chaineEnMajuscules
         .replace(/[ÀÁÂÃÄÅ]/g, 'A')
         .replace(/[ÈÉÊË]/g, 'E')
@@ -115,5 +130,15 @@ function createViz(){
     let svgEl = d3.select("#main").append("svg");
     svgEl.attr("width", ctx.w);
     svgEl.attr("height", ctx.h);
+
+    svgEl.append("text")
+        .attr("x", ctx.w / 1.5)
+        .attr("y", ctx.h / 10)
+        .attr("text-anchor", "middle")
+        .style("font-size", "60px")
+        .style("fill", "steelblue")
+        .text(stationName);
+
     loadData(svgEl);
+
 }

@@ -4,7 +4,7 @@ const ctx = {
     mapMode: false,
     MIN_COUNT: 3000,
     ANIM_DURATION: 600, // ms
-    NODE_SIZE_NL: 2,
+    NODE_SIZE_NL: 4,
     NODE_SIZE_MAP: 3,
     LINK_ALPHA: 0.2,
     nodes: [],
@@ -17,14 +17,14 @@ const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
 
 //Fonction qui créée les stations et les lignes de traffic
 function createGraphLayout(svg, station, trafficLines){
-    const metroGroup = svg.append("g").attr("class", "metro-stations");
-    const rerGroup = svg.append("g").attr("class", "rer-stations");
-    const tramGroup = svg.append("g").attr("class", "tram-stations");
-    const terGroup = svg.append("g").attr("class", "ter-stations");
     const metroLines = svg.append("g").attr("class", "metro-lines");
     const rerLines = svg.append("g").attr("class", "rer-lines");
     const tramLines = svg.append("g").attr("class", "tram-lines");
     const terLines = svg.append("g").attr("class", "ter-lines");
+    const metroGroup = svg.append("g").attr("class", "metro-stations");
+    const rerGroup = svg.append("g").attr("class", "rer-stations");
+    const tramGroup = svg.append("g").attr("class", "tram-stations");
+    const terGroup = svg.append("g").attr("class", "ter-stations");
 
     createRerStations(rerGroup, station.features.filter(d => d.properties.mode === "RER"), rerLines, trafficLines.features.filter(d => d.properties.mode === "RER"));
     createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"), tramLines, trafficLines.features.filter(d => d.properties.mode === "TRAMWAY"));
