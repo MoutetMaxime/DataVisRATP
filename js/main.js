@@ -47,6 +47,11 @@ function createMetroStations(group, stations, groupLines, metroLines) {
        })
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
+        .attr("id", d => d.properties.nom_gares)
+        .on("click", function(d) {
+            const stationPageURL = "detail_station.html" + "?id=" + this.id;
+            window.location.href = stationPageURL;
+        })
         .append("title").text(d => d.properties.nom_gares);
     
     drawTrafficLines(groupLines, metroLines, ".metro-lines");
@@ -68,6 +73,11 @@ function createRerStations(group, stations, groupLines, rerLines) {
         .attr("width", ctx.NODE_SIZE_NL*4)
         .attr("height", ctx.NODE_SIZE_NL*4)
         .style("fill", "red")
+        .attr("id", d => d.properties.nom_gares)
+        .on("click", function(d) {
+            const stationPageURL = "detail_station.html" + "?id=" + this.id;
+            window.location.href = stationPageURL;
+        })
         .append("title").text(d => d.properties.nom_gares);
     
     drawTrafficLines(groupLines, rerLines, ".rer-lines");
@@ -89,6 +99,11 @@ function createTramStations(group, stations, groupLines, tramLines) {
         })
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
+        .attr("id", d => d.properties.nom_gares)
+        .on("click", function(d) {
+            const stationPageURL = "detail_station.html" + "?id=" + this.id;
+            window.location.href = stationPageURL;
+        })
         .append("title").text(d => d.properties.nom_gares);
 
     drawTrafficLines(groupLines, tramLines, ".tram-lines")
@@ -109,6 +124,11 @@ function createTerStations(group, stations, groupLines, terLines) {
         })
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
+        .attr("id", d => d.properties.nom_gares)
+        .on("click", function(d) {
+            const stationPageURL = "detail_station.html" + "?id=" + this.id;
+            window.location.href = stationPageURL;
+        })
         .append("title").text(d => d.properties.nom_gares);
 
     drawTrafficLines(groupLines, terLines, ".ter-lines")
@@ -130,7 +150,7 @@ function drawTrafficLines(group, trafficData, lines) {
 //Légende de densité de population
 function drawLegend(svg, colorScale) {
     const legendWidth = 20, legendHeight = 300;
-    const legendX = 50; 
+    const legendX = 1300; 
     const legendY = 50; 
 
     const numBoxes = colorScale.range().length;
@@ -206,7 +226,6 @@ function loadData(svg){
             .text(function(d){return `${d.properties.l_ar}`;})
         
         drawLegend(svg, colorScale);
-        createGraphLayout(svg, station);
         drawTrafficLines(svg, trafficLines);
         }).catch(function (err) {
             console.log("Error loading data");
