@@ -1,6 +1,25 @@
 body {
-    background-color: rgb(44, 44, 44);
+    background-color: rgb(22, 22, 22);
+    font-family: dosis;
+    color: white;
 }
+
+.text-white {
+    color: white;
+}
+
+.nav_text {
+    font-family: dosis;
+    color: white;
+    font-size: 2em;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav_text:hover {
+    filter : drop-shadow(0px 0px 4px #31bf5a);
+}
+
 
 .logo_title {
     color: white;
