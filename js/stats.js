@@ -41,23 +41,27 @@ function createBarChart(svgEl, trafficData) {
      .attr("fill", "steelblue");
 
     svgEl.append("text")
-     .attr("x", (width / 2) + margin.left)
+     .attr("x", (width / 2) + 125)
      .attr("y", 0.7 * margin.top)
      .attr("text-anchor", "middle")
      .style("font-size", "20px")
-     .style("fill", "steelblue")
+     .style("fill", "#fff")
      .text('ANNUAL RATP TRAFIC');
 }
 
 function createPieChart(svgEl, data) {
     var pieWidth = 300,
         pieHeight = 300,
-        pieMarginTop = 400; // Ajustez cette valeur pour positionner le camembert en dessous du graphique en barres
+        pieMarginTop = 500; // Ajustez cette valeur pour positionner le camembert en dessous du graphique en barres
     
     var radius = Math.min(pieWidth, pieHeight) / 2;
     var gPie = svgEl.append("g").attr("transform", `translate(${pieWidth / 2 + 175},${pieMarginTop + radius})`);
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    var color = d3.scaleOrdinal()
+                  .range(["#041938", "#08306b", "#08519c", "#2171b5", 
+    "#4292c6", "#6baed6", "#9ecae1", "#c6dbef", 
+    "#deebf7", "#f7fbff"])
+                  .domain(data.map(d => d.Station));
 
     var pie = d3.pie()
                 .sort(null)
@@ -67,9 +71,9 @@ function createPieChart(svgEl, data) {
                  .outerRadius(radius - 10)
                  .innerRadius(0);
 
-    var label = d3.arc()
-                  .outerRadius(radius - 40)
-                  .innerRadius(radius - 40);
+    var labelArc = d3.arc()
+                 .outerRadius(radius)
+                 .innerRadius(radius);
 
     var arc = gPie.selectAll(".arc")
                .data(pie(data))
@@ -80,11 +84,29 @@ function createPieChart(svgEl, data) {
        .attr("d", path)
        .attr("fill", function(d) { return color(d.data.Station); });
 
+    // Ensuite, ajoutez les étiquettes de texte
     arc.append("text")
-       .attr("transform", function(d) { return `translate(${label.centroid(d)})`; })
-       .attr("dy", "0.35em")
-       .text(function(d) { return d.data.Station; });
+       .attr("transform", function(d) {
+           var pos = labelArc.centroid(d);
+           return `translate(${pos})`;
+       })
+       .attr("text-anchor", function(d) {
+           return (d.endAngle + d.startAngle) / 2 > Math.PI ? "end" : "start";
+       })
+       .text(function(d) { return d.data.Station; })
+       .style("font-size", "11px")
+       .style("fill", "#fff")
+       .attr("dy", "0.35em");
+    
+    svgEl.append("text")
+       .attr("x", (pieWidth / 2) + 175)
+       .attr("y", 0.9 * pieMarginTop)
+       .attr("text-anchor", "middle")
+       .style("font-size", "20px")
+       .style("fill", "#fff")
+       .text('TOP 10 BUSIEST RATP STATIONS IN 2022');
 }
+
 
 function loadTopStationsData(svgEl){
     d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv", function(d) {
