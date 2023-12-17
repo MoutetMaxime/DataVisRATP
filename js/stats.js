@@ -89,7 +89,7 @@ function createBarChart(svgEl, trafficData) {
      .attr("text-anchor", "middle")
      .style("font-size", "20px")
      .style("fill", "#fff")
-     .text('ANNUAL RATP TRAFIC');
+     .text('ANNUAL RATP TRAFFIC');
 }
 
 function createHorizontalBarChart(svgEl, data) {
