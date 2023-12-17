@@ -43,7 +43,6 @@ function createBarChart(svgEl, trafficData) {
     .attr("height", d => height - yScale(d.metro))
     .attr("fill", colorScale('metro'));
 
-   // Ajout des barres pour RER, empilées sur les barres METRO
    g.selectAll(".bar.rer")
     .data(trafficData)
     .enter().append("rect")
@@ -57,17 +56,14 @@ function createBarChart(svgEl, trafficData) {
     .attr("height", d => height - yScale(d.rer))
     .attr("fill", colorScale('rer'));
 
-    // Position de la légende
     var legend = svgEl.append("g")
                       .attr("transform", `translate(${width + margin.left + 40}, ${margin.top})`);
 
-    // Couleurs et labels pour la légende
     var legendData = [
         { label: "Métro", color: "#2171b5" },
         { label: "RER", color: "#9ecae1" }
     ];
 
-    // Créer les éléments de la légende
     legendData.forEach((d, i) => {
         var legendRow = legend.append("g")
                               .attr("transform", `translate(0, ${i * 20})`);
@@ -98,24 +94,20 @@ function createBarChart(svgEl, trafficData) {
 
 function createHorizontalBarChart(svgEl, data) {
     var barWidth = 300,
-        barHeight = 300, // Hauteur augmentée pour accueillir les barres horizontales
+        barHeight = 300, 
         barMarginTop = 450;
 
-    // Échelle pour l'axe Y qui représente les stations
     const yScale = d3.scaleBand()
                      .rangeRound([0, barHeight])
                      .padding(0.1)
                      .domain(data.map(d => d.Station));
 
-    // Échelle pour l'axe X qui représente le trafic
     const xScale = d3.scaleLinear()
                      .range([0, barWidth])
                      .domain([0, d3.max(data, d => d.Trafic)]);
 
-    // Groupe pour le graphique à barres horizontales
     const gBar = svgEl.append("g").attr("transform", `translate(${200},${barMarginTop})`);
 
-    // Ajouter les axes
     gBar.append("g")
         .call(d3.axisLeft(yScale));
     
@@ -129,7 +121,6 @@ function createHorizontalBarChart(svgEl, data) {
     var color = d3.scaleOrdinal(blueColors).domain(data.map(d => d.Station));
     
 
-    // Créer les barres horizontales
     gBar.selectAll(".bar")
         .data(data)
         .enter().append("rect")
@@ -143,7 +134,6 @@ function createHorizontalBarChart(svgEl, data) {
         .attr("width", d => xScale(d.Trafic))
         .attr("fill", (d, i) => color(i)); 
 
-    // Ajouter le titre
     svgEl.append("text")
         .attr("x", barWidth)
         .attr("y", barMarginTop - 50)
@@ -156,34 +146,18 @@ function createHorizontalBarChart(svgEl, data) {
 
 
 
-function loadTopStationsData(svgEl){
-    d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv", function(d) {
-        return { Station: d.Station, Trafic: +d.Trafic };
-    }).then(function(data) {
-        // Trier et prendre les 10 premières stations
-        var topStations = data.sort((a, b) => b.Trafic - a.Trafic).slice(0, 10);
-        createHorizontalBarChart(svgEl, topStations);
-    }).catch(function (err) {
-        console.warn("Error loading data", err);
-    });
-}
-
-
-
-
 function loadData(svgEl){
-    Promise.all([
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2014.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2015.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2016.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2017.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2018.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2019.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2020.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2021.csv"),
-        d3.dsv(";", "data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv")
-      ]).then(function(files) {
-        let trafficData = files.map((data, index) => {
+    const fileNames = [
+        "2014.csv", "2015.csv", "2016.csv", "2017.csv", "2018.csv", 
+        "2019.csv", "2020.csv", "2021.csv", "2022.csv"
+    ];
+
+    const filePromises = fileNames.map(fileName =>
+        d3.dsv(";", `data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-${fileName}`)
+    );
+
+    Promise.all(filePromises).then(files => {
+        const trafficData = files.map((data, index) => {
             let yearData = { year: 2014 + index, metro: 0, rer: 0 };
             data.forEach(d => {
                 if (d.Réseau === "Métro") {
@@ -194,22 +168,131 @@ function loadData(svgEl){
             });
             return yearData;
         });
+
         createBarChart(svgEl, trafficData);
+
+        let topStations = files[files.length - 1]
+            .sort((a, b) => b.Trafic - a.Trafic)
+            .slice(0, 10);
+
+        createHorizontalBarChart(svgEl, topStations);
         
-    }).catch(function (err) {
-        console.log("Error loading data");
-        console.log(err);
+    }).catch(err => {
+        console.log("Error loading data", err);
+    });
+}
+
+function formatTrafic(value) {
+    if (value >= 1e6) {
+      return (value / 1e6).toFixed(1) + 'M'; // Arrondit à une décimale pour les millions
+    } else if (value >= 1e3) {
+      return (value / 1e3).toFixed(1) + 'k'; // Arrondit à une décimale pour les milliers
+    } else {
+      return value.toString(); // Moins de 1000, affichez le nombre complet
     }
-    );
+  }
+
+function createMap(svgEl) {
+    // Dimensions et échelle pour la carte
+    const mapWidth = 800, mapHeight = 800;
+    const mapMarginLeft = 700;
+    const gMap = svgEl.append("g")
+                      .attr("transform", `translate(${mapMarginLeft}, 0)`);
+
+    // Projection pour la carte de Paris
+    const projection = d3.geoMercator()
+                         .center([2.3522, 48.8566]) // Coordonnées de Paris
+                         .scale(200000) // Ajuster selon la taille souhaitée
+                         .translate([mapWidth / 2, mapHeight / 2]);
+
+    // Path generator
+    const path = d3.geoPath().projection(projection);
+
+    // Chargement des données GeoJSON des arrondissements
+    d3.json('data_ratp//arrondissements.geojson').then(arrondissementsData => {
+        gMap.selectAll("path")
+            .data(arrondissementsData.features)
+            .enter().append("path")
+            .attr("fill", "#c6dbef")
+            .attr("d", path)
+            .attr("stroke", "#fff");
+        
+        // Calculer la position du centre de chaque arrondissement pour placer les bulles
+        arrondissementsData.features.forEach(function(feature) {
+            feature.properties.center = path.centroid(feature);
+        });
+
+        d3.dsv(";",'data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv', function(d) {
+            return {
+                Arrondissement: +d['Arrondissement pour Paris'],
+                Trafic: +d.Trafic
+            };
+        }).then(function(data) {
+            let traficData = Array.from(d3.rollup(data, 
+                v => d3.sum(v, d => d.Trafic), 
+                d => d.Arrondissement))
+                .map(([Arrondissement, Trafic]) => ({ Arrondissement, Trafic }))
+                .filter(d => d.Arrondissement !== 0);
+            
+            const radiusScale = d3.scaleSqrt()
+                .domain([0, d3.max(traficData, d => d.Trafic)])
+                .range([0, 60]); // Ajuster le rayon max selon la visualisation
+                
+
+            gMap.selectAll("circle")
+                .data(traficData)
+                .enter().append("circle")
+                .attr("cx", d => {
+                    let arrondissement = arrondissementsData.features.find(feature => +feature.properties.c_ar === d.Arrondissement);
+                    return arrondissement ? projection(d3.geoCentroid(arrondissement))[0] : null;
+                })
+                .attr("cy", d => {
+                    let arrondissement = arrondissementsData.features.find(feature => +feature.properties.c_ar === d.Arrondissement);
+                    return arrondissement ? projection(d3.geoCentroid(arrondissement))[1] : null;
+                })
+                .attr("r", d => radiusScale(d.Trafic))
+                .attr("fill", "#2171b5")
+                .attr("stroke", "#fff")
+                .append("title").text(d => d.Arrondissement + 'e Arr');
+            
+            const textGroup = gMap.append("g").attr("class", "labels");
+
+            textGroup.selectAll("text")
+                  .data(traficData)
+                  .enter().append("text")
+                  .attr("x", d => {
+                    let arrondissement = arrondissementsData.features.find(feature => +feature.properties.c_ar === d.Arrondissement);
+                    return arrondissement ? projection(d3.geoCentroid(arrondissement))[0] : null;
+                  })
+                  .attr("y", d => {
+                    let arrondissement = arrondissementsData.features.find(feature => +feature.properties.c_ar === d.Arrondissement);
+                    return arrondissement ? projection(d3.geoCentroid(arrondissement))[1] : null;
+                  })
+                  .attr("text-anchor", "middle")
+                  .attr("alignment-baseline", "central")
+                  .style("fill", "white") // Changé pour le noir pour assurer la visibilité
+                  .style("font-size", d => `${radiusScale(d.Trafic)/2}px`) // Exemple de dimensionnement dynamique
+                  .text(d => formatTrafic(d.Trafic));
+            });
+    });
+
+    svgEl.append("text")
+        .attr("x", 1000) // Centrez le titre
+        .attr("y", 100) // Positionnez le titre en haut (ajustez selon vos besoins)
+        .attr("text-anchor", "middle") // Centrez le texte horizontalement
+        .style("font-size", "24px") // Taille de la police du titre
+        .style("fill", "#fff") // Couleur du texte
+        .text("ANNUAL 2022 TRAFFIC IN PARIS ARRONDISSEMENTS"); // Titre en anglais
+
 }
 
 function createViz(){
     console.log("Using D3 v" + d3.version);
-    d3.select("body")
-      .on("keydown", function(event, d){handleKeyEvent(event);});
+    d3.select("body").on("keydown", function(event){ handleKeyEvent(event); });
     const svgEl = d3.select("#main").append("svg")
       .attr("width", ctx.w)
-      .attr("height", ctx.h)
+      .attr("height", ctx.h);
+
     loadData(svgEl);
-    loadTopStationsData(svgEl);
+    createMap(svgEl);
 }
