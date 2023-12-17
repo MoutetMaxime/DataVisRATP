@@ -232,7 +232,7 @@ function loadData(svg){
             .style("stroke", "black")
             .style("stroke-width", 2)
             .append("title")
-            .text(function(d){return `${d.properties.l_ar}`;})
+            .text(function(d){return `${d.properties.c_ar}` + "e Arr";})
         
         drawLegend(svg, colorScale);
         drawTrafficLines(svg, trafficLines);
