@@ -90,31 +90,44 @@ function loadAndFilterCsv(file, stationName, stationType) {
     });
 }
 
+let stationCorrespondences = {};
+
+function loadCorrespondences(file) {
+    d3.dsv(";", file, function(d) {
+        return { 
+            station: d.Station,
+            correspondences: [d.Correspondance_1, d.Correspondance_2, d.Correspondance_3, d.Correspondance_4, d.Correspondance_5].filter(c => c)
+        };
+    }).then(data => {
+        data.forEach(d => {
+            stationCorrespondences[d.station] = d.correspondences;
+        });
+        console.log("Correspondences loaded:", stationCorrespondences);
+    }).catch(function (err) {
+        console.log("Error loading correspondences");
+        console.log(err);
+    });
+}
+
+loadCorrespondences("data_ratp/trafic/trafic-annuel-entrant-par-station-du-reseau-ferre-2022.csv");
+
 function loadData(svgEl){
     Promise.all(files.map(file => loadAndFilterCsv(file, stationName, stationType))).then(function(values) {
         let combinedData = values.flat();
         if (combinedData.length != 0) {
+            const loadedData = combinedData.map(d => ({
+                year: d.year.getFullYear(),
+                station: d.station,
+                traffic: d.traffic,
+                correspondences: stationCorrespondences[d.station] || [] // Utilisez les correspondances chargées ou un tableau vide si non trouvées
+            }));
+            displayStationsWithIcons(loadedData);
             graphTraffic(svgEl, combinedData);
         }
     }).catch(function (err) {
         console.log("Error loading data");
         console.log(err);
     });
-}
-
-
-function displayMap(){
-    console.log("yo");
-    const mymap = L.map('map').setView([48.8566, 2.3522], 12);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(mymap);
-
-    L.marker([48.8566, 2.3522]).addTo(mymap)
-        .bindPopup('Paris, France')
-        .openPopup();
-    
 }
 
 
@@ -134,6 +147,36 @@ function convertirEnMajusculesSansAccents(chaine) {
 
     return chaineEnMajuscules;
 }
+
+function displayStationsWithIcons(data) {
+    let stationsDiv = document.getElementById('stations');
+    if (!stationsDiv) {
+        stationsDiv = document.createElement('div');
+        stationsDiv.id = 'stations';
+        document.body.appendChild(stationsDiv);
+    }
+
+    stationsDiv.innerHTML = '';
+
+    data.forEach(stationData => {
+        const stationDiv = document.createElement('div');
+        stationDiv.className = 'station';
+
+        stationData.correspondences.forEach(correspondence => {
+            const icon = document.createElement('img');
+            icon.src = `/LINES/LINE_${correspondence}.png`;
+            icon.alt = `Ligne ${correspondence}`;
+            icon.width = 50; // Définit une largeur par défaut pour l'icône
+            icon.height = 50; // Définit une hauteur par défaut pour l'icône
+            stationDiv.appendChild(icon);
+        });
+
+        stationsDiv.appendChild(stationDiv);
+    });
+}
+
+
+
 
 function createViz(){
     console.log("Using D3 v" + d3.version);
