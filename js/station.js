@@ -85,7 +85,7 @@ function loadAndFilterCsv(file, stationName, stationType) {
             type: d.Réseau
         };
     }).then(data => {
-        const filteredData = data.filter(d => d.station.includes(stationName) && d.type === stationType);
+        const filteredData = data.filter(d => d.station === stationName && d.type === stationType);
         return filteredData;
     });
 }
@@ -121,7 +121,7 @@ function loadData(svgEl){
                 traffic: d.traffic,
                 correspondences: stationCorrespondences[d.station] || [] // Utilisez les correspondances chargées ou un tableau vide si non trouvées
             }));
-            displayStationsWithIcons(loadedData);
+            displayStationsWithIcons(svgEl, loadedData);
             graphTraffic(svgEl, combinedData);
         }
     }).catch(function (err) {
@@ -148,30 +148,29 @@ function convertirEnMajusculesSansAccents(chaine) {
     return chaineEnMajuscules;
 }
 
-function displayStationsWithIcons(data) {
-    let stationsDiv = document.getElementById('stations');
-    if (!stationsDiv) {
-        stationsDiv = document.createElement('div');
-        stationsDiv.id = 'stations';
-        document.body.appendChild(stationsDiv);
-    }
+function displayStationsWithIcons(svgEl, data) {
+    svgEl.selectAll('.station-icon').remove();
+    const iconSize = 50; // La taille des icônes
+    const iconSpacing = 60; // L'espacement entre les icônes
+    
+    data.forEach((stationData) => {
+        stationData.correspondences.forEach((correspondence, corrIndex) => {
+            const xPosition = corrIndex * iconSpacing; // Position horizontale de l'icône
+            const yPosition = iconSpacing; // Position verticale de l'icône
 
-    stationsDiv.innerHTML = '';
+            // Ajouter un groupe pour chaque icône
+            const iconGroup = svgEl.append("g")
+                                   .attr("class", "station-icon")
+                                   .attr("transform", `translate(${xPosition}, ${yPosition})`);
 
-    data.forEach(stationData => {
-        const stationDiv = document.createElement('div');
-        stationDiv.className = 'station';
-
-        stationData.correspondences.forEach(correspondence => {
-            const icon = document.createElement('img');
-            icon.src = `/LINES/LINE_${correspondence}.png`;
-            icon.alt = `Ligne ${correspondence}`;
-            icon.width = 50; // Définit une largeur par défaut pour l'icône
-            icon.height = 50; // Définit une hauteur par défaut pour l'icône
-            stationDiv.appendChild(icon);
+            // Ajouter une image SVG pour l'icône de la ligne
+            iconGroup.append("image")
+                     .attr("xlink:href", `/LINES/LINE_${correspondence}.png`) // Utilisez le bon chemin d'accès à votre image
+                     .attr("width", iconSize)
+                     .attr("height", iconSize)
+                     .attr("x", 700)
+                     .attr("y", 40);
         });
-
-        stationsDiv.appendChild(stationDiv);
     });
 }
 

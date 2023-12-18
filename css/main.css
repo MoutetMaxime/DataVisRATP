@@ -21,14 +21,6 @@ body {
     filter : drop-shadow(0px 0px 4px #31bf5a);
 }
 
-img {
-    width: 50px;
-    height: auto;
-    border: 1px solid black; /* Pour voir le contour de l'image même si elle ne charge pas */
-}
-
-
-
 svg {
     width: 100vw;
     height: 100vh;
