@@ -16,58 +16,60 @@ const files = [
   ];
 
 const searchParams = new URLSearchParams(window.location.search);
-const stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
+let stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
+if (searchParams.get('id') === "Palais Royal - Musée du Louvre"){
+    stationName = 'PALAIS-ROYAL';
+}
 const stationType = searchParams.get('mode');
 
 
   function graphTraffic(svgEl, data) {
-    var margin = {top: 100, right: 20, bottom: 70, left: 100},
+    var margin = {top: 150, right: 30, bottom: 70, left: 150},
         width = 400,
         height = 200;
 
-    var minTraffic = d3.min(data, d => d.traffic);
     var maxTraffic = d3.max(data, d => d.traffic);
 
-    var x = d3.scaleTime()
-              .domain([new Date(2013, 0, 1), new Date(2023, 0, 1)])
-              .range([0, width]);
+    var x = d3.scaleBand()
+          .domain(data.map(d => d.year.getFullYear()))
+          .rangeRound([0, width])
+          .padding(0.1);
+
     var y = d3.scaleLinear()
               .domain([0, maxTraffic])
               .range([height, 0]);
 
-    svgEl.append("g")
-        .attr("transform", "translate(" + margin.left + "," + (height + 2 * margin.top) + ")")
-        .call(d3.axisBottom(x));
+    const g = svgEl.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    svgEl.append("g")
-        .attr("transform", "translate(" + margin.left + "," + 2 * margin.top + ")")
+    g.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+          
+    g.append("g")
         .call(d3.axisLeft(y));
-
-    var barWidth = 30;
 
     svgEl.selectAll(".bar")
         .data(data)
         .enter().append("rect")
         .attr("class", "bar")
         .style("fill", "steelblue")
-        .attr("x", function(d) {
-            return x(new Date(d.year)) - (barWidth / 2) + margin.left;
-        })
-        .attr("width", barWidth - 1)
-        .attr("y", function(d) { return y(0) + 2 * margin.top; })
+        .attr("x", d => x(d.year.getFullYear()))
+        .attr("width", x.bandwidth())
+        .attr("y", function(d) { return y(0)})
         .attr("height", 0)
         .transition()
         .duration(750)
-        .attr("y", function(d) { return y(d.traffic) + 2 * margin.top; })
-        .attr("height", function(d) { return height - y(d.traffic); });
+        .attr("y", function(d) { return y(d.traffic)})
+        .attr("height", function(d) { return height - y(d.traffic); })
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
     svgEl.append("text")
         .attr("x", (width / 2) + margin.left)
-        .attr("y", 1.7 * margin.top)
+        .attr("y", 0.9 * margin.top)
         .attr("text-anchor", "middle")
         .style("font-size", "20px")
-        .style("fill", "steelblue")
-        .text('ANNUAL TRAFIC FOR THE STATION "' + data[0].station + '"');
+        .style("fill", "#fff")
+        .text('ANNUAL TRAFFIC FOR THE STATION "' + data[0].station + '"')
 }
 
 
