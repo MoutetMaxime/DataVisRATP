@@ -17,6 +17,7 @@ const files = [
 
 const searchParams = new URLSearchParams(window.location.search);
 const stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
+const stationType = searchParams.get('mode');
 
 
   function graphTraffic(svgEl, data) {
@@ -70,24 +71,30 @@ const stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
 }
 
 
-function loadAndFilterCsv(file, stationName) {
+function loadAndFilterCsv(file, stationName, stationType) {
     return d3.dsv(";", file, function(d) {
-      return { year: new Date(file.match(/\d+/)[0], 0, 1), station: d.Station, traffic: +d.Trafic };
-    }).then(data => data.filter(d => d.station === stationName));
+        return { 
+            year: new Date(file.match(/\d+/)[0], 0, 1), 
+            station: d.Station, 
+            traffic: +d.Trafic,
+            type: d.Réseau
+        };
+    }).then(data => {
+        const filteredData = data.filter(d => d.station.includes(stationName) && d.type === stationType);
+        return filteredData;
+    });
 }
 
 function loadData(svgEl){
-    Promise.all(files.map(file => loadAndFilterCsv(file, stationName))).then(function(values) {
+    Promise.all(files.map(file => loadAndFilterCsv(file, stationName, stationType))).then(function(values) {
         let combinedData = values.flat();
         if (combinedData.length != 0) {
             graphTraffic(svgEl, combinedData);
         }
-        
     }).catch(function (err) {
         console.log("Error loading data");
         console.log(err);
-    }
-    );
+    });
 }
 
 
@@ -137,7 +144,7 @@ function createViz(){
         .attr("text-anchor", "middle")
         .style("font-size", "60px")
         .style("fill", "steelblue")
-        .text(stationName);
+        .text(stationName + "-" + convertirEnMajusculesSansAccents(stationType));
 
     loadData(svgEl);
 

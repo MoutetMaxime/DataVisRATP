@@ -10,7 +10,7 @@ const ctx = {
     nodes: [],
     links: [],
 };
-
+let currentMode = "All";
 const MERCATOR_PROJ = d3.geoMercator().center([2.3514616, 48.8566969]).scale(200000).translate([ctx.w, ctx.h / 2]);
 const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
 
@@ -30,7 +30,6 @@ function createGraphLayout(svg, station, trafficLines){
     createTramStations(tramGroup, station.features.filter(d => d.properties.mode === "TRAMWAY"), tramLines, trafficLines.features.filter(d => d.properties.mode === "TRAMWAY"));
     createTerStations(terGroup, station.features.filter(d => d.properties.mode === "TRAIN"), terLines, trafficLines.features.filter(d => d.properties.mode === "TRAIN"));
     createMetroStations(metroGroup, station.features.filter(d => d.properties.mode === "METRO"), metroLines, trafficLines.features.filter(d => d.properties.mode === "METRO"));
-    console.log(station.features.filter(d => d.properties.mode === "METRO"))
 };
 
 //Stations et lignes de métro
@@ -50,8 +49,10 @@ function createMetroStations(group, stations, groupLines, metroLines) {
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .attr("id", d => d.properties.nom_gares)
         .on("click", function(d) {
-            const stationPageURL = "detail_station.html" + "?id=" + this.id;
-            window.location.href = stationPageURL;
+            if (currentMode === "Métro" || currentMode === "All") {
+                const stationPageURL = "detail_station.html?id=" + this.id + "&mode=Métro";
+                window.location.href = stationPageURL;
+            }
         })
         .append("title").text(d => d.properties.nom_gares);
     
@@ -76,8 +77,10 @@ function createRerStations(group, stations, groupLines, rerLines) {
         .style("fill", "red")
         .attr("id", d => d.properties.nom_gares)
         .on("click", function(d) {
-            const stationPageURL = "detail_station.html" + "?id=" + this.id;
-            window.location.href = stationPageURL;
+            if (currentMode === "RER" || currentMode === "All") {
+                const stationPageURL = "detail_station.html?id=" + this.id + "&mode=RER";
+                window.location.href = stationPageURL;
+            }
         })
         .append("title").text(d => d.properties.nom_gares);
     
@@ -102,8 +105,10 @@ function createTramStations(group, stations, groupLines, tramLines) {
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .attr("id", d => d.properties.nom_gares)
         .on("click", function(d) {
-            const stationPageURL = "detail_station.html" + "?id=" + this.id;
-            window.location.href = stationPageURL;
+            if (currentMode === "TRAM" || currentMode === "All") {
+                const stationPageURL = "detail_station.html?id=" + this.id + "&mode=TRAM";
+                window.location.href = stationPageURL;
+            }
         })
         .append("title").text(d => d.properties.nom_gares);
 
@@ -127,8 +132,10 @@ function createTerStations(group, stations, groupLines, terLines) {
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .attr("id", d => d.properties.nom_gares)
         .on("click", function(d) {
-            const stationPageURL = "detail_station.html" + "?id=" + this.id;
-            window.location.href = stationPageURL;
+            if (currentMode === "TER" || currentMode === "All") {
+                const stationPageURL = "detail_station.html?id=" + this.id + "&mode=TER";
+                window.location.href = stationPageURL;
+            }
         })
         .append("title").text(d => d.properties.nom_gares);
 
@@ -243,6 +250,7 @@ function loadData(svg){
         );
 }
 function showMetro() {
+    currentMode = "Métro";
     d3.select(".metro-stations").transition().duration(1000).style("opacity", 1);
     d3.select(".rer-stations").transition().duration(1000).style("opacity", 0);
     d3.select(".tram-stations").transition().duration(1000).style("opacity", 0);
@@ -254,6 +262,7 @@ function showMetro() {
 }
 
 function showRER() {
+    currentMode = "RER";
     d3.select(".metro-stations").transition().duration(1000).style("opacity", 0);
     d3.select(".rer-stations").transition().duration(1000).style("opacity", 1);
     d3.select(".tram-stations").transition().duration(1000).style("opacity", 0);
@@ -265,6 +274,7 @@ function showRER() {
 }
 
 function showTram() {
+    currentMode = "TRAM";
     d3.select(".metro-stations").transition().duration(1000).style("opacity", 0);
     d3.select(".rer-stations").transition().duration(1000).style("opacity", 0);
     d3.select(".tram-stations").transition().duration(1000).style("opacity", 1);
@@ -276,6 +286,7 @@ function showTram() {
 }
 
 function showTer() {
+    currentMode = "TER";
     d3.select(".ter-stations").transition().duration(1000).style("opacity", 1);
     d3.select(".metro-stations").transition().duration(1000).style("opacity", 0);
     d3.select(".rer-stations").transition().duration(1000).style("opacity", 0);
@@ -287,6 +298,7 @@ function showTer() {
 }
 
 function showAll() {
+    currentMode = "All";
     d3.select(".ter-stations").transition().duration(1000).style("opacity", 1);
     d3.select(".metro-stations").transition().duration(1000).style("opacity", 1);
     d3.select(".rer-stations").transition().duration(1000).style("opacity", 1);
