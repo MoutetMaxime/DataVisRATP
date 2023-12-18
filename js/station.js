@@ -20,6 +20,9 @@ let stationName = convertirEnMajusculesSansAccents(searchParams.get('id'));
 if (searchParams.get('id') === "Palais Royal - Musée du Louvre"){
     stationName = 'PALAIS-ROYAL';
 }
+if (searchParams.get('id') === "Louvre-Rivoli"){
+    stationName = 'LOUVRE';
+}
 const stationType = searchParams.get('mode');
 
 
@@ -52,6 +55,7 @@ const stationType = searchParams.get('mode');
         .data(data)
         .enter().append("rect")
         .attr("class", "bar")
+        .attr("transform", `translate(${margin.left},${margin.top})`)
         .style("fill", "steelblue")
         .attr("x", d => x(d.year.getFullYear()))
         .attr("width", x.bandwidth())
@@ -61,7 +65,6 @@ const stationType = searchParams.get('mode');
         .duration(750)
         .attr("y", function(d) { return y(d.traffic)})
         .attr("height", function(d) { return height - y(d.traffic); })
-        .attr("transform", `translate(${margin.left},${margin.top})`);
 
     svgEl.append("text")
         .attr("x", (width / 2) + margin.left)
