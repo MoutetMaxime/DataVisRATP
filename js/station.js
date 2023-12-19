@@ -23,6 +23,27 @@ if (searchParams.get('id') === "Palais Royal - Musée du Louvre"){
 if (searchParams.get('id') === "Louvre-Rivoli"){
     stationName = 'LOUVRE';
 }
+if (searchParams.get('id') === "Nation" && searchParams.get('mode')=='RER'){
+    stationName = 'NATION-RER';
+}
+if (searchParams.get('id') === "Châtelet-Les Halles" && searchParams.get('mode')=='RER'){
+    stationName = 'CHATELET-LES HALLES-RER';
+}
+if (searchParams.get('id') === "Gare du Nord" && searchParams.get('mode')=='RER'){
+    stationName = 'GARE DU NORD-RER';
+}
+if (searchParams.get('id') === "La Défense" && searchParams.get('mode')=='RER'){
+    stationName = 'LA DEFENSE-RER';
+}
+if (searchParams.get('id') === "Denfert-Rochereau" && searchParams.get('mode')=='RER'){
+    stationName = 'DENFERT-ROCHEREAU-RER';
+}
+if (searchParams.get('id') === "Gare de Lyon" && searchParams.get('mode')=='RER'){
+    stationName = 'GARE DE LYON-RER';
+}
+if (searchParams.get('id') === "Charles De Gaulle-Étoile" && searchParams.get('mode')=='RER'){
+    stationName = 'CHARLES DE GAULLE-ETOILE-RER';
+}
 const stationType = searchParams.get('mode');
 
 
