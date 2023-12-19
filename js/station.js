@@ -259,6 +259,43 @@ function drawMap(svgEl, stationLocation, lineCorrespondences) {
 
 }
 
+function loadAmenitiesData(svgEl) {
+    // Load defibrillator data
+    d3.json("data_ratp/defibrillateurs-du-reseau-ratp.geojson").then(defibrillatorData => {
+        const hasDefibrillator = defibrillatorData.features.some(feature => feature.properties.adr_voie.includes(searchParams.get('id')));
+        
+        // Load toilet data
+        d3.json("data_ratp/sanitaires-reseau-ratp.geojson").then(toiletData => {
+            const hasToilet = toiletData.features.some(feature => feature.properties.station === searchParams.get('id'));
+
+            // Display the amenities information
+            displayAmenitiesInfo(svgEl, hasDefibrillator, hasToilet);
+        });
+    });
+}
+
+function displayAmenitiesInfo(svgEl, hasDefibrillator, hasToilet) {
+    const amenitiesInfo = svgEl.append("g")
+                               .attr("class", "amenities-info")
+                               .attr("transform", "translate(10, 50)"); // Adjust position as needed
+
+    amenitiesInfo.append("text")
+                 .text(`Defibrillator: ${hasDefibrillator ? 'Available' : 'Not Available'}`)
+                 .attr("text-anchor", "middle")
+                 .style("font-size", "40px")
+                 .style("fill", "#fff")
+                 .attr("x", 300)
+                 .attr("y", 500);
+
+    amenitiesInfo.append("text")
+                 .text(`Toilet: ${hasToilet ? 'Available' : 'Not Available'}`)
+                 .attr("text-anchor", "middle")
+                 .style("font-size", "40px")
+                 .style("fill", "#fff")
+                 .attr("x", 300)
+                 .attr("y", 550);
+}
+
 
 
 
@@ -279,9 +316,10 @@ function createViz(){
         .text(stationName + "-" + convertirEnMajusculesSansAccents(stationType));
 
     getStationLocation(searchParams.get('id'), function(location) {
-        const lineCorrespondences = stationCorrespondences[stationName]; // Remplacez par la logique appropriée pour obtenir les correspondances
+        const lineCorrespondences = stationCorrespondences[stationName];
         drawMap(svgEl, location, lineCorrespondences);
     });
     loadData(svgEl);
+    loadAmenitiesData(svgEl);
 
 }
