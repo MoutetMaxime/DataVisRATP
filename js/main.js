@@ -104,12 +104,6 @@ function createTramStations(group, stations, groupLines, tramLines) {
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .attr("id", d => d.properties.nom_gares)
-        .on("click", function(d) {
-            if (currentMode === "TRAM" || currentMode === "All") {
-                const stationPageURL = "detail_station.html?id=" + this.id + "&mode=TRAM";
-                window.location.href = stationPageURL;
-            }
-        })
         .append("title").text(d => d.properties.nom_gares);
 
     drawTrafficLines(groupLines, tramLines, ".tram-lines")
@@ -131,12 +125,6 @@ function createTerStations(group, stations, groupLines, terLines) {
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .attr("id", d => d.properties.nom_gares)
-        .on("click", function(d) {
-            if (currentMode === "TER" || currentMode === "All") {
-                const stationPageURL = "detail_station.html?id=" + this.id + "&mode=TER";
-                window.location.href = stationPageURL;
-            }
-        })
         .append("title").text(d => d.properties.nom_gares);
 
     drawTrafficLines(groupLines, terLines, ".ter-lines")

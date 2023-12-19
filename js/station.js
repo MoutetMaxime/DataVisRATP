@@ -195,13 +195,77 @@ function displayStationsWithIcons(svgEl, data) {
     });
 }
 
+function getStationLocation(name_station, callback) {
+    d3.json("data_ratp/emplacement-des-gares-idf.geojson").then(data => {
+        const station = data.features.find(feature => feature.properties.nom_gares === name_station);
+        if (station) {
+            const location = station.geometry.coordinates;
+            callback(location);
+        } else {
+            console.log("Station not found");
+        }
+    });
+}
+
+function drawMap(svgEl, stationLocation, lineCorrespondences) {
+    const mapWidth = 1200, mapHeight = 800;
+    const mapMarginLeft = 500;
+    const gMap = svgEl.append("g")
+                      .attr("transform", `translate(${mapMarginLeft}, 0)`);
+                      const projection = d3.geoMercator()
+                      .center([2.3522, 48.8566]) // Coordonnées de Paris
+                      .scale(200000) // Ajuster selon la taille souhaitée
+                      .translate([mapWidth / 2, mapHeight / 2]);
+    const pathGenerator = d3.geoPath().projection(projection);
+
+    d3.json("data_ratp/arrondissements.geojson").then(arrondissementsData => {
+        gMap.selectAll(".arrondissements")
+            .data(arrondissementsData.features)
+            .enter().append("path")
+            .attr("class", "arrondissement")
+            .attr("d", pathGenerator)
+            .attr("fill", "#c6dbef")
+            .attr("stroke", "#fff");
+    });
+
+    d3.json("data_ratp/traces-du-reseau-ferre-idf.geojson").then(data => {
+        const filteredData = data.features.filter(feature => 
+            lineCorrespondences.includes(feature.properties.indice_lig) && feature.properties.mode === convertirEnMajusculesSansAccents(stationType)
+        );
+
+        gMap.selectAll(".lignes")
+            .data(filteredData)
+            .enter().append("path")
+            .attr("d", pathGenerator)
+            .attr("fill", "none")
+            .attr("stroke", d => "#" + d.properties.colourweb_hexa)
+            .attr("stroke-width", "3px")
+            .style("opacity", 0)
+            .transition()
+            .duration(1000)
+            .delay((d, i) => i * 5)
+            .style("opacity", 1);
+
+        // Marquer la station
+        gMap.append("circle")
+            .attr("cx", projection(stationLocation)[0])
+            .attr("cy", projection(stationLocation)[1])
+            .attr("r", 10)
+            .attr("fill", "red");
+    });
+
+
+
+
+}
+
 
 
 
 function createViz(){
     console.log("Using D3 v" + d3.version);
-    d3.select("body")
-      .on("keydown", function(event, d){handleKeyEvent(event);});
+    //d3.select("body")
+      //.on("keydown", function(event, d){handleKeyEvent(event);});
     let svgEl = d3.select("#main").append("svg");
     svgEl.attr("width", ctx.w);
     svgEl.attr("height", ctx.h);
@@ -214,6 +278,10 @@ function createViz(){
         .style("fill", "steelblue")
         .text(stationName + "-" + convertirEnMajusculesSansAccents(stationType));
 
+    getStationLocation(searchParams.get('id'), function(location) {
+        const lineCorrespondences = stationCorrespondences[stationName]; // Remplacez par la logique appropriée pour obtenir les correspondances
+        drawMap(svgEl, location, lineCorrespondences);
+    });
     loadData(svgEl);
 
 }

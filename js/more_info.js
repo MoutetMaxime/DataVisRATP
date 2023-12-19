@@ -23,7 +23,7 @@ function createMap(svgEl, dataType) {
     const path = d3.geoPath().projection(projection);
 
     // Chargement des données GeoJSON des arrondissements
-    d3.json('data_ratp//arrondissements.geojson').then(arrondissementsData => {
+    d3.json('data_ratp/arrondissements.geojson').then(arrondissementsData => {
         gMap.selectAll("path")
             .data(arrondissementsData.features)
             .enter().append("path")
