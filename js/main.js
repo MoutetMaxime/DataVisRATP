@@ -48,6 +48,7 @@ function createMetroStations(group, stations, groupLines, metroLines) {
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
         .attr("id", d => d.properties.nom_gares)
+        .attr("class","expand-on-hover")
         .on("click", function(d) {
             if (currentMode === "Métro" || currentMode === "All") {
                 const stationPageURL = "detail_station.html?id=" + this.id + "&mode=Métro";
@@ -75,6 +76,7 @@ function createRerStations(group, stations, groupLines, rerLines) {
         .attr("width", ctx.NODE_SIZE_NL*4)
         .attr("height", ctx.NODE_SIZE_NL*4)
         .style("fill", "red")
+        .attr("class","expand-on-hover")
         .attr("id", d => d.properties.nom_gares)
         .on("click", function(d) {
             if (currentMode === "RER" || currentMode === "All") {
@@ -103,6 +105,7 @@ function createTramStations(group, stations, groupLines, tramLines) {
         })
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
+        .attr("class","expand-on-hover")
         .attr("id", d => d.properties.nom_gares)
         .append("title").text(d => d.properties.nom_gares);
 
@@ -124,6 +127,7 @@ function createTerStations(group, stations, groupLines, terLines) {
         })
         .attr("width", ctx.NODE_SIZE_NL * 4)
         .attr("height", ctx.NODE_SIZE_NL * 4)
+        .attr("class","expand-on-hover")
         .attr("id", d => d.properties.nom_gares)
         .append("title").text(d => d.properties.nom_gares);
 

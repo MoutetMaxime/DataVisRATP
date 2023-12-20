@@ -32,5 +32,6 @@ svg {
   }
   
 .expand-on-hover:hover {
-transform: scale(1.1); /* You can adjust the scale factor as needed */
+transform: scale(1.005); /* You can adjust the scale factor as needed */
 }
+

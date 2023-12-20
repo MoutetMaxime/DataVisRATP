@@ -4,7 +4,7 @@ const ctx = {
 };
 
 function createBarChart(svgEl, trafficData) {
-    var margin = {top: 100, right: 30, bottom: 70, left: 150},
+    var margin = {top: 150, right: 30, bottom: 120, left: 150},
         width = 400,
         height = 200;
 
@@ -136,11 +136,11 @@ function createHorizontalBarChart(svgEl, data) {
 
     svgEl.append("text")
         .attr("x", barWidth)
-        .attr("y", barMarginTop - 50)
+        .attr("y", barMarginTop - 20)
         .attr("text-anchor", "middle")
         .style("font-size", "20px")
         .style("fill", "#fff")
-        .text('TOP 10 BUSIEST RATP STATIONS IN 2022');
+        .text('TOP 10 BUSIEST RATP STATIONS IN 2022 (NB. OF PASSENGERS)');
 }
 
 
