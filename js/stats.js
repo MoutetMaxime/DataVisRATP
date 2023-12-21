@@ -39,6 +39,7 @@ function createBarChart(svgEl, trafficData) {
     .attr("width", xScale.bandwidth())
     .attr("height", d => height - yScale(0))
     .transition()
+    .delay((d, i) => i * 100) 
     .duration(750)
     .attr("height", d => height - yScale(d.metro))
     .attr("fill", colorScale('metro'));
@@ -52,6 +53,7 @@ function createBarChart(svgEl, trafficData) {
     .attr("width", xScale.bandwidth())
     .attr("height", d => height - yScale(0))
     .transition()
+    .delay((d, i) => i * 100) 
     .duration(750)
     .attr("height", d => height - yScale(d.rer))
     .attr("fill", colorScale('rer'));
@@ -130,6 +132,7 @@ function createHorizontalBarChart(svgEl, data) {
         .attr("x", 0)
         .attr("width", d => xScale(0))
         .transition()
+        .delay((d, i) => i * 100) 
         .duration(750)
         .attr("width", d => xScale(d.Trafic))
         .attr("fill", (d, i) => color(i)); 
@@ -195,14 +198,14 @@ function formatTrafic(value) {
 function createMap(svgEl) {
     // Dimensions et échelle pour la carte
     const mapWidth = 800, mapHeight = 800;
-    const mapMarginLeft = 700;
+    const mapMarginLeft = 900;
     const gMap = svgEl.append("g")
                       .attr("transform", `translate(${mapMarginLeft}, 0)`);
 
     // Projection pour la carte de Paris
     const projection = d3.geoMercator()
                          .center([2.3522, 48.8566]) // Coordonnées de Paris
-                         .scale(200000)
+                         .scale(220000)
                          .translate([mapWidth / 2, mapHeight / 2]);
 
     // Path generator
@@ -213,7 +216,7 @@ function createMap(svgEl) {
         gMap.selectAll("path")
             .data(arrondissementsData.features)
             .enter().append("path")
-            .attr("fill", "#c6dbef")
+            .attr("fill", "rgb(22, 22, 22)")
             .attr("d", path)
             .attr("stroke", "#fff");
         
@@ -277,7 +280,7 @@ function createMap(svgEl) {
     });
 
     svgEl.append("text")
-        .attr("x", 1000)
+        .attr("x", 1300)
         .attr("y", 100)
         .attr("text-anchor", "middle")
         .style("font-size", "24px")

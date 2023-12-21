@@ -68,7 +68,7 @@ function createMap(svgEl, dataType) {
                 .enter()
                 .append("image")
                 .transition()
-                .delay((d, i) => (i-i%5) * 5) // Delay between each image creation
+                .delay((d, i) => i * 10) // Delay between each image creation
                 .duration(1000)
                 .attr("xlink:href", iconPath)
                 .attr("width", iconSize[0])
