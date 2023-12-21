@@ -68,9 +68,26 @@ const stationType = searchParams.get('mode');
     g.append("g")
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+    
+    g.append("text")
+        .attr("class", "x-axis-label")
+        .attr("x", width / 2.5)
+        .attr("y", height + margin.bottom / 1.5)
+        .style("text-anchor", "middle")
+        .style("fill", "#fff")
+        .text("Year");
           
     g.append("g")
         .call(d3.axisLeft(y));
+    
+    g.append("text")
+        .attr("class", "y-axis-label")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height / 2)
+        .attr("y", -margin.left / 1.8)
+        .style("text-anchor", "middle")
+        .style("fill", "#fff")
+        .text("Traffic");
 
     svgEl.selectAll(".bar")
         .data(data)
