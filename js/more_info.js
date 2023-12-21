@@ -21,6 +21,23 @@ function createMap(svgEl, dataType) {
 
     // Path generator
     const path = d3.geoPath().projection(projection);
+    const dataUrl = dataType === 'defibrillateurs' 
+        ? 'data_ratp/defibrillateurs-du-reseau-ratp.geojson' 
+        : 'data_ratp/sanitaires-reseau-ratp.geojson';
+    const iconPaths = {
+        defibrillateurs: '/defibrillator.png', // Chemin de l'icône de défibrillateur
+        toilettes: '/sanitaires.png'               // Chemin de l'icône de toilettes
+    };
+    const classNames = dataType === 'defibrillateurs'
+        ? 'defibrillator'
+        : 'toilettes';
+
+    const otherClassNames = dataType === 'defibrillateurs'
+        ? 'toilettes'
+        : 'defibrillator';
+
+    console.log("Loading data from " + dataUrl);
+    console.log("Class names: " + classNames);
 
     // Chargement des données GeoJSON des arrondissements
     d3.json('data_ratp/arrondissements.geojson').then(arrondissementsData => {
@@ -31,7 +48,8 @@ function createMap(svgEl, dataType) {
             .attr("d", path)
             .attr("stroke", "#fff");
 
-        svgEl.selectAll("image")
+        // Suppression des éléments existants qui sont de l'autre type
+        svgEl.selectAll(`.${otherClassNames}`)
             .transition()
             .delay((d, i) => i * 10) // Delay between each image removal
             .attr("x", 0)
@@ -39,13 +57,6 @@ function createMap(svgEl, dataType) {
             .attr("width", 0)
             .attr("height", 0)
             .remove();
-        const dataUrl = dataType === 'defibrillateurs' 
-            ? 'data_ratp/defibrillateurs-du-reseau-ratp.geojson' 
-            : 'data_ratp/sanitaires-reseau-ratp.geojson';
-        const iconPaths = {
-            defibrillateurs: '/defibrillator.png', // Chemin de l'icône de défibrillateur
-            toilettes: '/sanitaires.png'               // Chemin de l'icône de toilettes
-        };
 
         // Chargement des données des défibrillateurs
         const iconPath = iconPaths[dataType];
@@ -53,20 +64,22 @@ function createMap(svgEl, dataType) {
 
         // Chargement des données et création des éléments sur la carte
         d3.json(dataUrl).then(data => {
-            gMap.selectAll("image")
-                .data(data.features)
+            gMap.data(data.features)
                 .enter()
                 .append("image")
                 .transition()
-                .delay((d, i) => i * 10) // Delay between each image creation
+                .delay((d, i) => (i-i%5) * 5) // Delay between each image creation
                 .duration(1000)
                 .attr("xlink:href", iconPath)
                 .attr("width", iconSize[0])
                 .attr("height", iconSize[1])
-                .attr("x", d => projection(d.geometry.coordinates)[0] - iconSize[0] / 2)
-                .attr("y", d => projection(d.geometry.coordinates)[1] - iconSize[1] / 2)
+                .attr("class", classNames + " expand-on-hover") // Add the class expand-on-hover
+                .attr("x", d => projection(d.geometry.coordinates)[0] - iconSize[0] / 2 + mapMarginLeft)
+                .attr("y", d => projection(d.geometry.coordinates)[1] - iconSize[1] / 2 )
                 .append("title") // Ajout du titre
                 .text(d => d.properties.station || d.properties.adr_voie);
+
+            console.log("Loaded " + data.features.length + " elements");
         });
     });
 }
@@ -93,7 +106,7 @@ function loadBaseMap(svgEl) {
             .attr("stroke", "white")
             .style("opacity", 0)
             .transition()
-            .duration(1000)
+            .delay((d, i) => i * 100) 
             .style("opacity", 1);
     });
 }
@@ -105,10 +118,11 @@ function createViz(){
       .attr("width", ctx.w)
       .attr("height", ctx.h);
     loadBaseMap(svgEl);
-    createMap(svgEl, 'defibrillateurs');
+    createMap(svgEl, 'toilettes');
     document.querySelectorAll('input[name="mapOption"]').forEach((input) => {
         input.addEventListener('change', function() {
             const selectedOption = this.value;
+            console.log(selectedOption);
             createMap(svgEl, selectedOption);
         });
     });
