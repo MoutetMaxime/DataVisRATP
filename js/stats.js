@@ -45,7 +45,7 @@ function createBarChart(svgEl, trafficData) {
         .attr("y", -margin.left / 1.7)
         .style("text-anchor", "middle")
         .style("fill", "#fff")
-        .text("Traffic");
+        .text("Nb of passengers");
 
     g.selectAll(".bar.metro")
     .data(trafficData)

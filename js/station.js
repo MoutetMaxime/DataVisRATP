@@ -87,7 +87,7 @@ const stationType = searchParams.get('mode');
         .attr("y", -margin.left / 1.8)
         .style("text-anchor", "middle")
         .style("fill", "#fff")
-        .text("Traffic");
+        .text("Nb of passengers");
 
     svgEl.selectAll(".bar")
         .data(data)
