@@ -189,7 +189,7 @@ function convertirEnMajusculesSansAccents(chaine) {
 function displayStationsWithIcons(svgEl, data) {
     svgEl.selectAll('.station-icon').remove();
     const iconSize = 150;
-    const iconSpacing = 60;
+    const iconSpacing = 170;
     
     data.forEach((stationData) => {
         stationData.correspondences.forEach((correspondence, corrIndex) => {
@@ -205,7 +205,7 @@ function displayStationsWithIcons(svgEl, data) {
                      .attr("width", iconSize)
                      .attr("height", iconSize)
                      .attr("x", 700)
-                     .attr("y", 40);
+                     .attr("y", -70);
         });
     });
 }
