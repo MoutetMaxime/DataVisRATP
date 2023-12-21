@@ -118,7 +118,7 @@ function createTerStations(group, stations, groupLines, terLines) {
         .data(stations)
         .enter()
         .append("image")
-        .attr("xlink:href", "/icone_TER.png") // Assurez-vous d'avoir une icône pour les TER
+        .attr("xlink:href", "/icone_TER.png")
         .attr("x", function (d) {
             return MERCATOR_PROJ(d.geometry.coordinates)[0] - ctx.NODE_SIZE_NL;
         })
@@ -145,12 +145,11 @@ function drawTrafficLines(group, trafficData, lines) {
        .style("fill", "none")
        .style("stroke", "#20B2AA")
        .style("stroke-width", 2)
-       .style("opacity", 0) // Set initial opacity to 0
+       .style("opacity", 0)
 
-       // Add transition for progressive animation
        .transition()
-       .duration(1000) // Animation duration in milliseconds
-       .delay((d, i) => i * 5) // Delay between each linn
+       .duration(1000)
+       .delay((d, i) => i * 5)
        .style("opacity", 1);
 
 }
@@ -214,7 +213,6 @@ function loadData(svg){
         const minDensity = d3.min(arrondissement.features, d => d.properties.density);
         const maxDensity = d3.max(arrondissement.features, d => d.properties.density);
 
-    // Créer une échelle de couleurs avec ces valeurs
         const colorScale = d3.scaleQuantile()
             .domain(arrondissement.features.map(d => d.properties.density))
             .range(["#f7fbff", "#deebf7", "#c6dbef", "#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#08519c", "#08306b"]);
@@ -304,26 +302,23 @@ function showAll() {
 function createViz() {
     console.log("Using D3 v" + d3.version);
 
-    // Set up key event listener
     d3.select("body").on("keydown", function (event, d) {
         handleKeyEvent(event);
     });
 
-    // Create SVG element
     let svgEl = d3.select("#main").append("svg")
         .attr("width", ctx.w)
         .attr("height", ctx.h);
 
-    // Add zoom behavior
+    // Ajout d'une fonction de zoom
     const zoom = d3.zoom()
-        .scaleExtent([1, 8]) // Define the minimum and maximum zoom levels
+        .scaleExtent([1, 8])
         .on("zoom", zoomed);
 
     svgEl.call(zoom);
 
     loadData(svgEl);
 
-    // Set up event listeners for different actions
     d3.select("#showMetro").on("click", showMetro);
     d3.select("#showRER").on("click", showRER);
     d3.select("#showTram").on("click", showTram);

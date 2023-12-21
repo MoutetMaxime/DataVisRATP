@@ -140,7 +140,7 @@ function loadData(svgEl){
                 year: d.year.getFullYear(),
                 station: d.station,
                 traffic: d.traffic,
-                correspondences: stationCorrespondences[d.station] || [] // Utilisez les correspondances chargées ou un tableau vide si non trouvées
+                correspondences: stationCorrespondences[d.station] || []
             }));
             displayStationsWithIcons(svgEl, loadedData);
             graphTraffic(svgEl, combinedData);
@@ -171,22 +171,20 @@ function convertirEnMajusculesSansAccents(chaine) {
 
 function displayStationsWithIcons(svgEl, data) {
     svgEl.selectAll('.station-icon').remove();
-    const iconSize = 50; // La taille des icônes
-    const iconSpacing = 60; // L'espacement entre les icônes
+    const iconSize = 50;
+    const iconSpacing = 60;
     
     data.forEach((stationData) => {
         stationData.correspondences.forEach((correspondence, corrIndex) => {
-            const xPosition = corrIndex * iconSpacing; // Position horizontale de l'icône
-            const yPosition = iconSpacing; // Position verticale de l'icône
+            const xPosition = corrIndex * iconSpacing;
+            const yPosition = iconSpacing;
 
-            // Ajouter un groupe pour chaque icône
             const iconGroup = svgEl.append("g")
                                    .attr("class", "station-icon")
                                    .attr("transform", `translate(${xPosition}, ${yPosition})`);
 
-            // Ajouter une image SVG pour l'icône de la ligne
             iconGroup.append("image")
-                     .attr("xlink:href", `/LINES/LINE_${correspondence}.png`) // Utilisez le bon chemin d'accès à votre image
+                     .attr("xlink:href", `/LINES/LINE_${correspondence}.png`)
                      .attr("width", iconSize)
                      .attr("height", iconSize)
                      .attr("x", 700)
@@ -214,7 +212,7 @@ function drawMap(svgEl, stationLocation, lineCorrespondences) {
                       .attr("transform", `translate(${mapMarginLeft}, 0)`);
                       const projection = d3.geoMercator()
                       .center([2.3522, 48.8566]) // Coordonnées de Paris
-                      .scale(200000) // Ajuster selon la taille souhaitée
+                      .scale(200000)
                       .translate([mapWidth / 2, mapHeight / 2]);
     const pathGenerator = d3.geoPath().projection(projection);
 
@@ -246,7 +244,6 @@ function drawMap(svgEl, stationLocation, lineCorrespondences) {
             .delay((d, i) => i * 5)
             .style("opacity", 1);
 
-        // Marquer la station
         gMap.append("circle")
             .attr("cx", projection(stationLocation)[0])
             .attr("cy", projection(stationLocation)[1])
@@ -260,15 +257,12 @@ function drawMap(svgEl, stationLocation, lineCorrespondences) {
 }
 
 function loadAmenitiesData(svgEl) {
-    // Load defibrillator data
     d3.json("data_ratp/defibrillateurs-du-reseau-ratp.geojson").then(defibrillatorData => {
         const hasDefibrillator = defibrillatorData.features.some(feature => feature.properties.adr_voie.includes(searchParams.get('id')));
         
-        // Load toilet data
         d3.json("data_ratp/sanitaires-reseau-ratp.geojson").then(toiletData => {
             const hasToilet = toiletData.features.some(feature => feature.properties.station === searchParams.get('id'));
 
-            // Display the amenities information
             displayAmenitiesInfo(svgEl, hasDefibrillator, hasToilet);
         });
     });
@@ -277,7 +271,7 @@ function loadAmenitiesData(svgEl) {
 function displayAmenitiesInfo(svgEl, hasDefibrillator, hasToilet) {
     const amenitiesInfo = svgEl.append("g")
                                .attr("class", "amenities-info")
-                               .attr("transform", "translate(10, 50)"); // Adjust position as needed
+                               .attr("transform", "translate(10, 50)");
 
     amenitiesInfo.append("text")
                  .text(`Defibrillator: ${hasDefibrillator ? 'Available' : 'Not Available'}`)
