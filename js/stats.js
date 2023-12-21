@@ -202,7 +202,7 @@ function createMap(svgEl) {
     // Projection pour la carte de Paris
     const projection = d3.geoMercator()
                          .center([2.3522, 48.8566]) // Coordonnées de Paris
-                         .scale(200000) // Ajuster selon la taille souhaitée
+                         .scale(200000)
                          .translate([mapWidth / 2, mapHeight / 2]);
 
     // Path generator
@@ -217,7 +217,7 @@ function createMap(svgEl) {
             .attr("d", path)
             .attr("stroke", "#fff");
         
-        // Calculer la position du centre de chaque arrondissement pour placer les bulles
+        // Calcule la position du centre de chaque arrondissement pour placer les bulles
         arrondissementsData.features.forEach(function(feature) {
             feature.properties.center = path.centroid(feature);
         });
@@ -236,7 +236,7 @@ function createMap(svgEl) {
             
             const radiusScale = d3.scaleSqrt()
                 .domain([0, d3.max(traficData, d => d.Trafic)])
-                .range([0, 60]); // Ajuster le rayon max selon la visualisation
+                .range([0, 60]);
                 
 
             gMap.selectAll("circle")
@@ -270,19 +270,19 @@ function createMap(svgEl) {
                   })
                   .attr("text-anchor", "middle")
                   .attr("alignment-baseline", "central")
-                  .style("fill", "white") // Changé pour le noir pour assurer la visibilité
-                  .style("font-size", d => `${radiusScale(d.Trafic)/2}px`) // Exemple de dimensionnement dynamique
+                  .style("fill", "white")
+                  .style("font-size", d => `${radiusScale(d.Trafic)/2}px`)
                   .text(d => formatTrafic(d.Trafic));
             });
     });
 
     svgEl.append("text")
-        .attr("x", 1000) // Centrez le titre
-        .attr("y", 100) // Positionnez le titre en haut (ajustez selon vos besoins)
-        .attr("text-anchor", "middle") // Centrez le texte horizontalement
-        .style("font-size", "24px") // Taille de la police du titre
-        .style("fill", "#fff") // Couleur du texte
-        .text("ANNUAL 2022 TRAFFIC IN PARIS ARRONDISSEMENTS"); // Titre en anglais
+        .attr("x", 1000)
+        .attr("y", 100)
+        .attr("text-anchor", "middle")
+        .style("font-size", "24px")
+        .style("fill", "#fff")
+        .text("ANNUAL 2022 TRAFFIC IN PARIS ARRONDISSEMENTS");
 
 }
 
