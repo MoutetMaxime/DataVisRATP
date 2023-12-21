@@ -27,8 +27,25 @@ function createBarChart(svgEl, trafficData) {
      .attr("transform", `translate(0, ${height})`)
      .call(d3.axisBottom(xScale));
 
+     g.append("text")
+     .attr("class", "x-axis-label")
+     .attr("x", width / 2.5)
+     .attr("y", height + margin.bottom / 3)
+     .style("text-anchor", "middle")
+     .style("fill", "#fff")
+     .text("Year");
+
     g.append("g")
     .call(d3.axisLeft(yScale));
+
+    g.append("text")
+        .attr("class", "y-axis-label")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height / 2)
+        .attr("y", -margin.left / 1.7)
+        .style("text-anchor", "middle")
+        .style("fill", "#fff")
+        .text("Traffic");
 
     g.selectAll(".bar.metro")
     .data(trafficData)
@@ -112,10 +129,29 @@ function createHorizontalBarChart(svgEl, data) {
 
     gBar.append("g")
         .call(d3.axisLeft(yScale));
+
+    gBar.append("text")
+        .attr("class", "y-axis-label")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -barHeight / 2)
+        .attr("y", -170)
+        .style("text-anchor", "middle")
+        .style("fill", "#fff")
+        .text("Stations");
+   
+    
     
     gBar.append("g")
         .attr("transform", `translate(0, ${barHeight})`)
         .call(d3.axisBottom(xScale).ticks(5));
+
+    gBar.append("text")
+        .attr("class", "x-axis-label")
+        .attr("x", barWidth / 2.5)
+        .attr("y", barHeight * 1.15)
+        .style("text-anchor", "middle")
+        .style("fill", "#fff")
+        .text("Nb of passengers");
 
     var blueColors = ["#08306b", "#08519c", "#2171b5", "#4292c6", "#6baed6", 
         "#9ecae1", "#c6dbef", "#deebf7", "#eff3ff", "#f7fbff"];
