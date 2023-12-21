@@ -188,7 +188,7 @@ function convertirEnMajusculesSansAccents(chaine) {
 
 function displayStationsWithIcons(svgEl, data) {
     svgEl.selectAll('.station-icon').remove();
-    const iconSize = 50;
+    const iconSize = 150;
     const iconSpacing = 60;
     
     data.forEach((stationData) => {
@@ -239,7 +239,7 @@ function drawMap(svgEl, stationLocation, lineCorrespondences) {
             .enter().append("path")
             .attr("class", "arrondissement")
             .attr("d", pathGenerator)
-            .attr("fill", "#c6dbef")
+            .attr("fill", "rgb(22, 22, 22)")
             .attr("stroke", "#fff");
     });
 
@@ -311,26 +311,21 @@ function displayAmenitiesInfo(svgEl, hasDefibrillator, hasToilet) {
 
 
 function createViz(){
-    console.log("Using D3 v" + d3.version);
-    //d3.select("body")
-      //.on("keydown", function(event, d){handleKeyEvent(event);});
-    let svgEl = d3.select("#main").append("svg");
-    svgEl.attr("width", ctx.w);
-    svgEl.attr("height", ctx.h);
+        console.log("Using D3 v" + d3.version);
+        //d3.select("body")
+            //.on("keydown", function(event, d){handleKeyEvent(event);});
+        let svgEl = d3.select("#main").append("svg");
+        svgEl.attr("width", ctx.w);
+        svgEl.attr("height", ctx.h);
 
-    svgEl.append("text")
-        .attr("x", ctx.w / 1.5)
-        .attr("y", ctx.h / 10)
-        .attr("text-anchor", "middle")
-        .style("font-size", "60px")
-        .style("fill", "steelblue")
-        .text(stationName + "-" + convertirEnMajusculesSansAccents(stationType));
+        const stationNameDiv = d3.select("#name_station");
+        stationNameDiv.text(stationName +" " +convertirEnMajusculesSansAccents(stationType));
 
-    getStationLocation(searchParams.get('id'), function(location) {
-        const lineCorrespondences = stationCorrespondences[stationName];
-        drawMap(svgEl, location, lineCorrespondences);
-    });
-    loadData(svgEl);
-    loadAmenitiesData(svgEl);
+        getStationLocation(searchParams.get('id'), function(location) {
+                const lineCorrespondences = stationCorrespondences[stationName];
+                drawMap(svgEl, location, lineCorrespondences);
+        });
+        loadData(svgEl);
+        loadAmenitiesData(svgEl);
 
 }
