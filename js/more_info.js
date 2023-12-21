@@ -7,10 +7,10 @@ const ctx = {
 function createMap(svgEl, dataType) {
     // Dimensions et échelle pour la carte
     const mapWidth = 1200, mapHeight = 800;
-    const mapMarginLeft = 200;
+    const mapMarginLeft = 400;
     const defibrillatorIconPath = '/defibrillator.png'; // Mettez à jour avec le chemin réel vers votre icône
     const defibrillatorIconSize = [20, 20]; // La largeur et la hauteur de l'icône en pixels
-    const gMap = svgEl.append("g")
+    const gMap = svgEl.selectAll("g")
                       .attr("transform", `translate(${mapMarginLeft}, 0)`);
 
     // Projection pour la carte de Paris
@@ -31,24 +31,35 @@ function createMap(svgEl, dataType) {
             .attr("d", path)
             .attr("stroke", "#fff");
 
-        svgEl.selectAll("image").remove();
+        svgEl.selectAll("image")
+            .transition()
+            .delay((d, i) => i * 10) // Delay between each image removal
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 0)
+            .attr("height", 0)
+            .remove();
         const dataUrl = dataType === 'defibrillateurs' 
             ? 'data_ratp/defibrillateurs-du-reseau-ratp.geojson' 
             : 'data_ratp/sanitaires-reseau-ratp.geojson';
         const iconPaths = {
-                defibrillateurs: '/defibrillator.png', // Chemin de l'icône de défibrillateur
-                toilettes: '/sanitaires.png'               // Chemin de l'icône de toilettes
-            };
+            defibrillateurs: '/defibrillator.png', // Chemin de l'icône de défibrillateur
+            toilettes: '/sanitaires.png'               // Chemin de l'icône de toilettes
+        };
 
         // Chargement des données des défibrillateurs
         const iconPath = iconPaths[dataType];
-        const iconSize = [20, 20]; // Vous pouvez également définir des tailles différentes pour chaque type si nécessaire
+        const iconSize = [20, 20]; 
 
         // Chargement des données et création des éléments sur la carte
         d3.json(dataUrl).then(data => {
             gMap.selectAll("image")
                 .data(data.features)
-                .enter().append("image")
+                .enter()
+                .append("image")
+                .transition()
+                .delay((d, i) => i * 10) // Delay between each image creation
+                .duration(1000)
                 .attr("xlink:href", iconPath)
                 .attr("width", iconSize[0])
                 .attr("height", iconSize[1])
@@ -62,7 +73,7 @@ function createMap(svgEl, dataType) {
 
 function loadBaseMap(svgEl) {
     const mapWidth = 1200, mapHeight = 800;
-    const mapMarginLeft = 200;
+    const mapMarginLeft = 400;
     const gMap = svgEl.append("g")
                       .attr("transform", `translate(${mapMarginLeft}, 0)`);
 
@@ -77,9 +88,13 @@ function loadBaseMap(svgEl) {
         gMap.selectAll("path")
             .data(arrondissementsData.features)
             .enter().append("path")
-            .attr("fill", "#c6dbef")
+            .attr("fill", "black")
             .attr("d", path)
-            .attr("stroke", "#fff");
+            .attr("stroke", "white")
+            .style("opacity", 0)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1);
     });
 }
 
@@ -90,6 +105,7 @@ function createViz(){
       .attr("width", ctx.w)
       .attr("height", ctx.h);
     loadBaseMap(svgEl);
+    createMap(svgEl, 'defibrillateurs');
     document.querySelectorAll('input[name="mapOption"]').forEach((input) => {
         input.addEventListener('change', function() {
             const selectedOption = this.value;

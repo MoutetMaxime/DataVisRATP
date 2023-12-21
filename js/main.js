@@ -11,7 +11,7 @@ const ctx = {
     links: [],
 };
 let currentMode = "All";
-const MERCATOR_PROJ = d3.geoMercator().center([2.3514616, 48.8566969]).scale(200000).translate([ctx.w, ctx.h / 2]);
+const MERCATOR_PROJ = d3.geoMercator().center([2.3514616, 48.8566969]).scale(200000).translate([ctx.w+200, ctx.h / 2]);
 const geoPathGenerator = d3.geoPath().projection(MERCATOR_PROJ);
 
 
