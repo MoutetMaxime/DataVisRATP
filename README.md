@@ -1,25 +1,52 @@
 # INF552: Data Visualization
 
-Ce projet a été réalisé dans le cadre du cours "Data Visualization" donné par Emmanuel Pietriga à l'École Polytechnique.
+This project was completed as part of the "Data Visualization" course taught by Emmanuel Pietriga at École Polytechnique.
 
-## Description du Projet
+## Project Description
 
-L'objectif de ce projet était de visualiser des données relatives aux stations de métro et RER du réseau de transport parisien. Nous avons utilisé des jeux de données suffisamment complets pour permettre la création de visualisations intéressantes, notamment sur la base de données géographiques. Nos visualisations ne se contentent pas de montrer les stations et les lignes de métro, mais fournissent également des informations pratiques, telles que la disponibilité de défibrillateurs et de toilettes à chaque station.
+The objective of this project was to visualize data related to the metro and RER stations in the Paris transportation network. We used comprehensive datasets to create interesting visualizations, particularly with geographic data. Our visualizations not only display the metro stations and lines but also provide practical information, such as the availability of defibrillators and restrooms at each station.
 
-Notre projet a été entièrement codé en **JavaScript**, **HTML**, et **CSS**, et les fichiers de données utilisés étaient au format **.csv** et **.geojson**.
+Our project was entirely coded in **JavaScript**, **HTML**, and **CSS**, and the data files used were in **.csv** and **.geojson** formats.
 
-## Fonctionnalités
+## Features
 
-- **Navigation interactive** : Permet de naviguer entre les différentes stations de métro et RER.
-- **Statistiques** : Affiche des statistiques pour chaque station ainsi que pour les arrondissements de Paris.
-- **Visualisation géographique** : Utilisation de données géographiques pour représenter le réseau de transport parisien sur une carte.
-- **Informations pratiques** : Indication de la disponibilité des défibrillateurs et des toilettes dans chaque station.
-- **Animations et design intuitif** : Interface utilisateur agréable avec une barre de navigation conviviale et des animations fluides.
+- **Interactive navigation**: Allows users to navigate between different metro and RER stations.
+- **Statistics**: Displays statistics for each station as well as for Paris districts.
+- **Geographical visualization**: Uses geographical data to represent the Paris transportation network on a map.
+- **Practical information**: Indicates the availability of defibrillators and restrooms at each station.
+- **Animations and intuitive design**: User-friendly interface with a convenient navigation bar and smooth animations.
 
 ## Installation
 
-1. Clonez le dépôt GitHub :
+1. Clone the GitHub repository:
 
    ```bash
-   git clone https://github.com/votre-utilisateur/nom-du-repo.git
-   cd nom-du-repo
+   git clone https://github.com/MoutetMaxime/DataVisRATP.git
+   cd DataVisRATP
+   ```
+2. Open index.html in your browser to explore the web application.
+
+## Usage
+
+- Use the navigation bar to select stations and display associated statistics.
+- Explore the different layers of visualizations (stations, metro lines, district statistics).
+- Activate filters to view stations equipped with defibrillators or restrooms.
+
+## Datasets Used
+- **CSV**: Contains information about the stations (name, line, available services, etc.).
+- **GeoJSON**: Represents the geolocation of metro and RER stations and lines.
+
+## Technologies Used
+- **JavaScript**
+- **HTML / CSS**
+- **D3.js** for data visualization
+- **Leaflet.js** for the interactive map
+- **CSV** and **GeoJSON** for datasets
+
+## Collaborators
+
+This project was developed by the following team members:
+
+- **[Maxime Moutet](https://github.com/MoutetMaxime)** - [LinkedIn](https://www.linkedin.com/in/maximemoutet)
+- **[Matthieu Olekhnovitch](https://github.com/Matt-Olek)** - [LinkedIn](https://www.linkedin.com/in/matthieu-olekhnovitch)
+- **[Inès Fonquernie]** - [LinkedIn](https://www.linkedin.com/in/inès-fonquernie-77b500219)
