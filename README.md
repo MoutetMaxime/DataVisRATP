@@ -50,3 +50,8 @@ This project was developed by the following team members:
 - **[Maxime Moutet](https://github.com/MoutetMaxime)** - [LinkedIn](https://www.linkedin.com/in/maximemoutet)
 - **[Matthieu Olekhnovitch](https://github.com/Matt-Olek)** - [LinkedIn](https://www.linkedin.com/in/matthieu-olekhnovitch)
 - **[Inès Fonquernie]** - [LinkedIn](https://www.linkedin.com/in/inès-fonquernie-77b500219)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
